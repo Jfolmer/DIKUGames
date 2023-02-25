@@ -28,10 +28,9 @@ namespace Galaga {
         }
         
         public void Move() {
-            if (shape.Position.X == 0.0f){
-                
+            if (shape.Position.X - shape.Direction.X > 0.0f || shape.Position.X + shape.Direction.X < 1.0f){
+                shape.Move();
             }
-
         }
 
         public void SetMoveLeft(bool val) {
