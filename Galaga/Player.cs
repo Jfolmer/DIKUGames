@@ -2,13 +2,21 @@ using DIKUArcade.Entities;
 
 using DIKUArcade.Graphics;
 
+using DIKUArcade.Math;
+
 namespace Galaga {
 
     public class Player {
-
+    
         private Entity entity;
 
         private DynamicShape shape;
+
+        private float moveLeft = 0.0f;
+
+        private float moveRight = 0.0f;
+
+        private const float MOVEMENT_SPEED = 0.01f;
 
         public Player(DynamicShape shape, IBaseImage image) {
             entity = new Entity(shape, image);
@@ -19,5 +27,41 @@ namespace Galaga {
             entity.RenderEntity();
         }
         
+        public void Move() {
+            if (shape.Position.X == 0.0f){
+                
+            }
+
+        }
+
+        public void SetMoveLeft(bool val) {
+            if (val){
+                moveLeft = moveLeft - MOVEMENT_SPEED;
+                UpdateDirection();
+            }
+            else{
+                moveLeft = 0.0f;
+                UpdateDirection();
+            }
+        }
+
+        public void SetMoveRight(bool val) {
+            if (val){
+                moveRight = moveRight + MOVEMENT_SPEED;
+                UpdateDirection();
+            }
+            else{
+                moveRight = 0.0f;
+                UpdateDirection();
+            }
+        }
+
+        private void UpdateDirection(){
+            float sum = moveRight - moveLeft;
+            Vec2F vec = new Vec2F (sum,0.0f);
+            shape.ChangeDirection(vec);
+        }
+        
+
     }
 }

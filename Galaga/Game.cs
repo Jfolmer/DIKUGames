@@ -21,10 +21,8 @@ public class Game : DIKUGame {
 
     }
     public override void Render() {
-
-        //TODO: Render Game Entities
-
-        throw new System.NotImplementedException("Galaga game has nothing to render yet.");
+        
+        player.Render();
 
     }
     public override void Update() {
