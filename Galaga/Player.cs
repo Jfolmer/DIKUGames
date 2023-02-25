@@ -16,7 +16,7 @@ namespace Galaga {
         }
         
         public void Render() {
-            // TODO: render the player entity
+            Image.Render(shape);
         }
         
     }
