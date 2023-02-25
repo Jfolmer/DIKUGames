@@ -14,6 +14,7 @@ namespace Galaga {
             entity = new Entity(shape, image);
             this.shape = shape;
         }
+        
         public void Render() {
             // TODO: render the player entity
         }
