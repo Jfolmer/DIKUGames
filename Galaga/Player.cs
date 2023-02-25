@@ -16,7 +16,7 @@ namespace Galaga {
         }
         
         public void Render() {
-            Image.Render(shape);
+            entity.RenderEntity();
         }
         
     }
