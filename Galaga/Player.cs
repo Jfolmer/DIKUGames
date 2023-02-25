@@ -28,21 +28,9 @@ namespace Galaga {
         }
         
         public void Move() {
-            Vec2F lCorner = new Vec2F (0.0f,0.0f);
-            Vec2F RCorner = new Vec2F (1.0f,0.0f);
-            Vec2F move = new Vec2F (MOVEMENT_SPEED,0.0f);
-            if (shape.Position == lCorner){
-                shape.Position = lCorner;
-                
+            if (shape.Position.X - shape.Direction.X > 0.0f || shape.Position.X + shape.Direction.X < 1.0f){
+                shape.Move();
             }
-            else if (shape.Position == RCorner){
-                        shape.Position = RCorner;
-            }
-            else {
-                shape.Position = (move);
-            }
-            
-
         }
 
         public void SetMoveLeft(bool val) {
