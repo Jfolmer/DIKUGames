@@ -17,5 +17,6 @@ namespace Galaga {
         public void Render() {
             // TODO: render the player entity
         }
+        public void test(){}
     }
 }
