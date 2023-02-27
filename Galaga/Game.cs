@@ -56,25 +56,21 @@ public class Game : DIKUGame, IGameEventProcessor {
             case KeyboardKey.A:
                 player.SetMoveRight(false);
                 player.SetMoveLeft(true);
-                player.Move();
                 break;
             
             case KeyboardKey.D:
                 player.SetMoveLeft(false);
                 player.SetMoveRight(true);
-                player.Move();
                 break;
 
             case KeyboardKey.Left:
                 player.SetMoveRight(false);
                 player.SetMoveLeft(true);
-                player.Move();
                 break;
             
             case KeyboardKey.Right:
                 player.SetMoveLeft(false);
                 player.SetMoveRight(true);
-                player.Move();
                 break;
 
             /* case KeyboardKey.Space:
@@ -111,13 +107,20 @@ public class Game : DIKUGame, IGameEventProcessor {
         }
     }
     private void KeyHandler(KeyboardAction action, KeyboardKey key) {
-        /* while (){
-            this.KeyPress(key);
+        if (action == KeyboardAction.KeyPress){
+            KeyPress(key);
         }
-        this.KeyRelease(key); */
-
+        else{
+            KeyRelease(key);
+        }
     }
     public void ProcessEvent(GameEvent gameEvent) {
-        // Leave this empty for now
+        
+/*         if (gameEvent ==  active){
+            this.KeyHandler(0,gameEvent);
+        }
+        else {
+        this.KeyHandler((Int32 1),gameEvent);
+        } */
     }
 }
