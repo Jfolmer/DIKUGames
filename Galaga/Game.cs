@@ -45,26 +45,26 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
 
     private void KeyPress(KeyboardKey key) {
-        if (key == KeyboardKey.Escape){
-            window.CloseWindow();
-        }
-        else{
-            switch (key){
+        switch (key){
+            case KeyboardKey.Escape:
+                window.CloseWindow();
+                break;
 
-                case KeyboardKey.A:
-                    player.SetMoveRight(false);
-                    player.SetMoveLeft(true);
-                    player.Move();
-                    break;
+            case KeyboardKey.A:
+                player.SetMoveRight(false);
+                player.SetMoveLeft(true);
+                player.Move();
+                break;
+            
+            case KeyboardKey.D:
+                player.SetMoveLeft(false);
+                player.SetMoveRight(true);
+                player.Move();
+                break;
+
+            default:
+                break;
                 
-                case KeyboardKey.D:
-                    player.SetMoveLeft(false);
-                    player.SetMoveRight(true);
-                    player.Move();
-                    break;
-
-                default:
-                    break;
             }
         }
         // TODO: switch on key string and set the player's move direction
