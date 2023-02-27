@@ -46,7 +46,10 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
 
     private void KeyPress(KeyboardKey key) {
-        // TODO: Close window if escape is pressed
+        if (key == KeyboardKey.Escape){
+            window.CloseWindow();
+        }
+        else{}
         // TODO: switch on key string and set the player's move direction
     }
     private void KeyRelease(KeyboardKey key) {
