@@ -41,15 +41,32 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     public override void Update() {
 
-        throw new System.NotImplementedException("Galaga game has no entities to update yet.");
-        
+        int b = 2+3;
     }
 
     private void KeyPress(KeyboardKey key) {
         if (key == KeyboardKey.Escape){
             window.CloseWindow();
         }
-        else{}
+        else{
+            switch (key){
+
+                case KeyboardKey.A:
+                    player.SetMoveRight(false);
+                    player.SetMoveLeft(true);
+                    player.Move();
+                    break;
+                
+                case KeyboardKey.D:
+                    player.SetMoveLeft(false);
+                    player.SetMoveRight(true);
+                    player.Move();
+                    break;
+
+                default:
+                    break;
+            }
+        }
         // TODO: switch on key string and set the player's move direction
     }
     private void KeyRelease(KeyboardKey key) {
