@@ -41,7 +41,10 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     public override void Update() {
 
-        int b = 2+3;
+        this.eventBus.ProcessEventsSequentially();
+
+        player.Move();
+        
     }
 
     private void KeyPress(KeyboardKey key) {
@@ -62,18 +65,57 @@ public class Game : DIKUGame, IGameEventProcessor {
                 player.Move();
                 break;
 
+            case KeyboardKey.Left:
+                player.SetMoveRight(false);
+                player.SetMoveLeft(true);
+                player.Move();
+                break;
+            
+            case KeyboardKey.Right:
+                player.SetMoveLeft(false);
+                player.SetMoveRight(true);
+                player.Move();
+                break;
+
+            /* case KeyboardKey.Space:
+                tbd */
+
+            default:
+                break;
+        }
+    }
+    private void KeyRelease(KeyboardKey key) {
+        switch (key){
+            case KeyboardKey.A:
+                player.SetMoveLeft(false);
+                break;
+            
+            case KeyboardKey.D:
+                player.SetMoveRight(false);
+                break;
+
+            case KeyboardKey.Left:
+                player.SetMoveLeft(false);
+                break;
+            
+            case KeyboardKey.Right:
+                player.SetMoveRight(false);
+                break;
+
+            /* case KeyboardKey.Space:
+                tbd */
+
             default:
                 break;
                 
-            }
         }
-        // TODO: switch on key string and set the player's move direction
-    }
-    private void KeyRelease(KeyboardKey key) {
-        // TODO: switch on key string and disable the player's move direction
     }
     private void KeyHandler(KeyboardAction action, KeyboardKey key) {
-        // TODO: Switch on KeyBoardAction and call proper method
+        /* while (){
+            this.KeyPress(key);
+        }
+        this.KeyRelease(key); */
+
     }
     public void ProcessEvent(GameEvent gameEvent) {
         // Leave this empty for now
