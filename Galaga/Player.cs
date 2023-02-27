@@ -28,9 +28,7 @@ namespace Galaga {
         }
         
         public void Move() {
-            if (shape.Position.X - shape.Direction.X > 0.0f || shape.Position.X + shape.Direction.X < 1.0f){
-                shape.Move();
-            }
+            shape.Move();
         }
 
         public void SetMoveLeft(bool val) {
@@ -56,7 +54,7 @@ namespace Galaga {
         }
 
         private void UpdateDirection(){
-            float sum = moveRight - moveLeft;
+            float sum = moveRight + moveLeft;
             Vec2F vec = new Vec2F (sum,0.0f);
             shape.ChangeDirection(vec);
         }
