@@ -54,22 +54,18 @@ public class Game : DIKUGame, IGameEventProcessor {
                 break;
 
             case KeyboardKey.A:
-                player.SetMoveRight(false);
                 player.SetMoveLeft(true);
                 break;
             
             case KeyboardKey.D:
-                player.SetMoveLeft(false);
                 player.SetMoveRight(true);
                 break;
 
             case KeyboardKey.Left:
-                player.SetMoveRight(false);
                 player.SetMoveLeft(true);
                 break;
             
             case KeyboardKey.Right:
-                player.SetMoveLeft(false);
                 player.SetMoveRight(true);
                 break;
 
