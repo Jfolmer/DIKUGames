@@ -24,6 +24,12 @@ public class Game : DIKUGame, IGameEventProcessor {
 
     private IBaseImage playerShotImage;
 
+    private AnimationContainer enemyExplosions;
+
+    private List<Image> explosionStrides;
+
+    private const int EXPLOSION_LENGTH_MS = 500;
+
     public Game(WindowArgs windowArgs) : base(windowArgs) {
 
         player = new Player(
@@ -57,6 +63,10 @@ public class Game : DIKUGame, IGameEventProcessor {
 
         playerShotImage = new Image(Path.Combine("Assets", "Images", "BulletRed2.png"));
 
+        enemyExplosions = new AnimationContainer(numEnemies);
+
+        explosionStrides = ImageStride.CreateStrides(8, Path.Combine("Assets", "Images", "Explosion.png"));
+
     }
     
     public override void Render() {
@@ -64,6 +74,8 @@ public class Game : DIKUGame, IGameEventProcessor {
         enemies.RenderEntities();
 
         player.Render();
+
+        enemyExplosions.RenderAnimations();
 
         playerShots.RenderEntities();
 
@@ -75,7 +87,7 @@ public class Game : DIKUGame, IGameEventProcessor {
         player.Move();
 
         IterateShots();
-        
+
     }
 
     private void KeyPress(KeyboardKey key) {
@@ -101,7 +113,16 @@ public class Game : DIKUGame, IGameEventProcessor {
                 break;
 
             case KeyboardKey.Space:
-                playerShots.AddEntity(new PlayerShot (new Vec2F ((player.GetShape().Position.X + player.GetShape().Extent.X/2),((player.GetShape().Position.Y + player.GetShape().Extent.Y))) ,playerShotImage));
+                playerShots.AddEntity(new PlayerShot (new Vec2F ((player.GetShape().Position.X + player.GetShape().Extent.X/2),
+                ((player.GetShape().Position.Y + player.GetShape().Extent.Y))) ,playerShotImage));
+                break;
+
+            case KeyboardKey.W:
+                player.SetMoveUp(true);
+                break;
+
+            case KeyboardKey.S:
+                player.SetMoveDown(true);
                 break;
 
             default:
@@ -126,17 +147,30 @@ public class Game : DIKUGame, IGameEventProcessor {
                 player.SetMoveRight(false);
                 break;
 
+            case KeyboardKey.W:
+                player.SetMoveUp(false);
+                break;
+
+            case KeyboardKey.S:
+                player.SetMoveDown(false);
+                break;
+
             default:
                 break;
                 
         }
     }
     private void KeyHandler(KeyboardAction action, KeyboardKey key) {
+
         if (action == KeyboardAction.KeyPress){
+
             KeyPress(key);
+
         }
         else{
+
             KeyRelease(key);
+
         }
     }
     public void ProcessEvent(GameEvent gameEvent) {
@@ -146,19 +180,36 @@ public class Game : DIKUGame, IGameEventProcessor {
     
     private void IterateShots() {
         playerShots.Iterate(shot => {
+
             shot.Move();
-            if ( shot.GetShape().Position.Y >= 1.0f ) {
+
+            if ( shot.GetShape().Position.Y > 1.0f ) {
+
                 shot.DeleteEntity();
+
             } else {
+
                 enemies.Iterate(enemy => {
-                    // TODO: if collision btw shot and enemy -> delete both entities
-                    if (enemy.GetShape().Position == shot.GetShape().Position){
-                        shot.DeleteEntity();
+
+                    if (CollisionDetection.Aabb(enemy.GetShape(),shot.GetShape()).Collision){
+
                         enemy.DeleteEntity();
+                        
+                        AddExplosion(enemy.GetShape().Position,enemy.GetShape().Extent);
+                        
+                        shot.DeleteEntity();
+
+
                     }
                 });
             }
         });
+    }
+
+    public void AddExplosion(Vec2F position, Vec2F extent) {
+
+        enemyExplosions.AddAnimation(new StationaryShape(position,extent),EXPLOSION_LENGTH_MS/8, new ImageStride (8, Path.Combine("Assets", "Images", "Explosion.png")));
+
     }
 
 }
