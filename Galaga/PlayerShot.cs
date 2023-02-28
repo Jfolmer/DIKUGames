@@ -13,17 +13,16 @@ public class PlayerShot : Entity {
 
     public PlayerShot(Vec2F position, IBaseImage image)
         : base(new DynamicShape (position, new Vec2F (0.008f,0.021f)), image) {
-            this.shape = new DynamicShape (position, new Vec2F (0.008f,0.021f));
+            this.shape = new DynamicShape (position, extent, direction);
+            this.Shape.AsDynamicShape().ChangeDirection(direction);
         }
     
     public void Move(){
-        shape.Position += direction; 
+
+        this.Shape.Move(direction);
+
     }
 
-    public DynamicShape GetShape(){
-        return shape;
-    }
-    
     public void SetShape(DynamicShape input){
         shape = input;
     }
