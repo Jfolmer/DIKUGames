@@ -63,6 +63,12 @@ namespace Galaga {
             shape.ChangeDirection(vec);
         }
         
-
+            public DynamicShape GetShape(){
+            return shape;
+        }
+    
+        public void SetShape(DynamicShape input){
+            shape = input;
+        }
     }
 }
