@@ -16,6 +16,10 @@ namespace Galaga {
 
         private float moveRight = 0.0f;
 
+        private float moveUp = 0.0f;
+
+        private float moveDown = 0.0f;
+
         private const float MOVEMENT_SPEED = 0.01f;
 
         public Player(DynamicShape shape, IBaseImage image) {
@@ -29,7 +33,8 @@ namespace Galaga {
         
         public void Move() {
             if (0.0f > shape.Position.X + shape.Direction.X ||
-            shape.Position.X + shape.Extent.X + shape.Direction.X > 1.0f){
+            shape.Position.X + shape.Extent.X + shape.Direction.X > 1.0f || 0.0f > shape.Position.Y + shape.Direction.Y
+            || shape.Position.Y + shape.Extent.Y + shape.Direction.Y > 0.9f){
                 return;
             }
             shape.Move();
@@ -57,9 +62,32 @@ namespace Galaga {
             }
         }
 
+        public void SetMoveUp(bool val) {
+            if (val){
+                moveUp = moveUp + MOVEMENT_SPEED;
+                UpdateDirection();
+            }
+            else{
+                moveUp = 0.0f;
+                UpdateDirection();
+            }
+        }
+
+        public void SetMoveDown(bool val) {
+            if (val){
+                moveDown = moveDown - MOVEMENT_SPEED;
+                UpdateDirection();
+            }
+            else{
+                moveDown = 0.0f;
+                UpdateDirection();
+            }
+        }
+
         private void UpdateDirection(){
-            float sum = moveRight + moveLeft;
-            Vec2F vec = new Vec2F (sum,0.0f);
+            float sumX = moveRight + moveLeft ;
+            float sumY = moveUp + moveDown;
+            Vec2F vec = new Vec2F (sumX,sumY);
             shape.ChangeDirection(vec);
         }
         
