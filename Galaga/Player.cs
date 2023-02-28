@@ -28,6 +28,10 @@ namespace Galaga {
         }
         
         public void Move() {
+            if (0.0f > shape.Position.X + shape.Direction.X ||
+            shape.Position.X + shape.Extent.X + shape.Direction.X > 1.0f){
+                return;
+            }
             shape.Move();
         }
 
@@ -59,6 +63,12 @@ namespace Galaga {
             shape.ChangeDirection(vec);
         }
         
-
+            public DynamicShape GetShape(){
+            return shape;
+        }
+    
+        public void SetShape(DynamicShape input){
+            shape = input;
+        }
     }
 }

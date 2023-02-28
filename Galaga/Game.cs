@@ -6,6 +6,7 @@ using DIKUArcade;
 using DIKUArcade.GUI;
 using DIKUArcade.Events;
 using DIKUArcade.Input;
+using DIKUArcade.Physics;
 using System.Collections.Generic;
 
 
@@ -16,6 +17,12 @@ public class Game : DIKUGame, IGameEventProcessor {
     private Player player;
 
     private GameEventBus eventBus;
+
+    private EntityContainer<Enemy> enemies;
+
+    private EntityContainer<PlayerShot> playerShots;
+
+    private IBaseImage playerShotImage;
 
     public Game(WindowArgs windowArgs) : base(windowArgs) {
 
@@ -33,10 +40,32 @@ public class Game : DIKUGame, IGameEventProcessor {
 
         eventBus.Subscribe(GameEventType.InputEvent, this);
 
+        List<Image> images = ImageStride.CreateStrides
+            (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
+
+        const int numEnemies = 8;
+
+        enemies = new EntityContainer<Enemy>(numEnemies);
+
+        for (int i = 0; i < numEnemies; i++) {
+            enemies.AddEntity(new Enemy(
+                new DynamicShape(new Vec2F(0.1f + (float)i * 0.1f, 0.9f), new Vec2F(0.1f, 0.1f)),
+                new ImageStride(80, images)));
+        }
+
+        playerShots = new EntityContainer<PlayerShot>();
+
+        playerShotImage = new Image(Path.Combine("Assets", "Images", "BulletRed2.png"));
+
     }
+    
     public override void Render() {
         
+        enemies.RenderEntities();
+
         player.Render();
+
+        playerShots.RenderEntities();
 
     }
     public override void Update() {
@@ -44,6 +73,8 @@ public class Game : DIKUGame, IGameEventProcessor {
         this.eventBus.ProcessEventsSequentially();
 
         player.Move();
+
+        IterateShots();
         
     }
 
@@ -54,27 +85,24 @@ public class Game : DIKUGame, IGameEventProcessor {
                 break;
 
             case KeyboardKey.A:
-                player.SetMoveRight(false);
                 player.SetMoveLeft(true);
                 break;
             
             case KeyboardKey.D:
-                player.SetMoveLeft(false);
                 player.SetMoveRight(true);
                 break;
 
             case KeyboardKey.Left:
-                player.SetMoveRight(false);
                 player.SetMoveLeft(true);
                 break;
             
             case KeyboardKey.Right:
-                player.SetMoveLeft(false);
                 player.SetMoveRight(true);
                 break;
 
-            /* case KeyboardKey.Space:
-                tbd */
+            case KeyboardKey.Space:
+                playerShots.AddEntity(new PlayerShot (new Vec2F ((player.GetShape().Position.X + player.GetShape().Extent.X/2),((player.GetShape().Position.Y + player.GetShape().Extent.Y))) ,playerShotImage));
+                break;
 
             default:
                 break;
@@ -98,9 +126,6 @@ public class Game : DIKUGame, IGameEventProcessor {
                 player.SetMoveRight(false);
                 break;
 
-            /* case KeyboardKey.Space:
-                tbd */
-
             default:
                 break;
                 
@@ -116,11 +141,24 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     public void ProcessEvent(GameEvent gameEvent) {
         
-/*         if (gameEvent ==  active){
-            this.KeyHandler(0,gameEvent);
-        }
-        else {
-        this.KeyHandler((Int32 1),gameEvent);
-        } */
     }
+
+    
+    private void IterateShots() {
+        playerShots.Iterate(shot => {
+            shot.Move();
+            if ( shot.GetShape().Position.Y >= 1.0f ) {
+                shot.DeleteEntity();
+            } else {
+                enemies.Iterate(enemy => {
+                    // TODO: if collision btw shot and enemy -> delete both entities
+                    if (enemy.GetShape().Position == shot.GetShape().Position){
+                        shot.DeleteEntity();
+                        enemy.DeleteEntity();
+                    }
+                });
+            }
+        });
+    }
+
 }
