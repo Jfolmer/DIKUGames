@@ -30,6 +30,8 @@ public class Game : DIKUGame, IGameEventProcessor {
 
     private const int EXPLOSION_LENGTH_MS = 500;
 
+    private Score Points = new Score(0);
+
     public Game(WindowArgs windowArgs) : base(windowArgs) {
 
         player = new Player(
@@ -93,6 +95,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     private void KeyPress(KeyboardKey key) {
         switch (key){
             case KeyboardKey.Escape:
+                System.Console.WriteLine("The player scored {0} points!", Points.tally );
                 window.CloseWindow();
                 break;
 
@@ -183,22 +186,23 @@ public class Game : DIKUGame, IGameEventProcessor {
 
             shot.Move();
 
-            if ( shot.GetShape().Position.Y > 1.0f ) {
-
+            if (shot.Shape.Position.Y > 1.0f ) {
+                
                 shot.DeleteEntity();
 
             } else {
 
                 enemies.Iterate(enemy => {
 
-                    if (CollisionDetection.Aabb(enemy.GetShape(),shot.GetShape()).Collision){
+                    if (CollisionDetection.Aabb(shot.Shape.AsDynamicShape(), enemy.Shape).Collision){
 
                         enemy.DeleteEntity();
                         
-                        AddExplosion(enemy.GetShape().Position,enemy.GetShape().Extent);
+                        AddExplosion(enemy.Shape.Position,enemy.Shape.Extent);
                         
                         shot.DeleteEntity();
 
+                        Points.IncreaseTally();
 
                     }
                 });
@@ -208,7 +212,8 @@ public class Game : DIKUGame, IGameEventProcessor {
 
     public void AddExplosion(Vec2F position, Vec2F extent) {
 
-        enemyExplosions.AddAnimation(new StationaryShape(position,extent),EXPLOSION_LENGTH_MS/8, new ImageStride (8, Path.Combine("Assets", "Images", "Explosion.png")));
+        enemyExplosions.AddAnimation(new StationaryShape(position,extent),
+        EXPLOSION_LENGTH_MS, new ImageStride (8, explosionStrides));
 
     }
 

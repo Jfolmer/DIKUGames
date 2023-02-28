@@ -9,10 +9,6 @@ public class Enemy : Entity {
     
     private DynamicShape shape;
 
-    public DynamicShape GetShape(){
-            return shape;
-        }
-    
     public void SetShape(DynamicShape input){
         shape = input;
     }
