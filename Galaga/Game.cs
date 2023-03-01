@@ -95,7 +95,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     private void KeyPress(KeyboardKey key) {
         switch (key){
             case KeyboardKey.Escape:
-                System.Console.WriteLine("The player scored {0} points!", Points.tally );
+                System.Console.WriteLine("The player scored {0} points!", Points.tally);
                 window.CloseWindow();
                 break;
 
