@@ -98,5 +98,9 @@ namespace Galaga {
         public void SetShape(DynamicShape input){
             shape = input;
         }
+
+        public Vec2F GetPosition(){
+            return shape.Position;
+        }
     }
 }
