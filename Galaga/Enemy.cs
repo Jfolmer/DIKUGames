@@ -1,20 +1,34 @@
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
 using System.IO;
+using DIKUArcade.Math;
 namespace Galaga;
 public class Enemy : Entity {
     public Enemy(DynamicShape shape, IBaseImage image, int startHP)
         : base(shape, image) {
             this.shape = shape;
             this.HP = startHP;
+            this.StartX = shape.Position.X;
+            this.StartY = shape.Position.Y;
         }
     
     private DynamicShape shape;
 
+    public float StartY;
+
+    public float StartX;
+
+
     private int HP;
 
-    private int Speed;
+    private float Speed = 0.003f;
 
+    public void Move(Vec2F place){
+        shape.Position = place;
+    }
+    public DynamicShape GetShape(){
+        return shape;
+    }
     public void SetShape(DynamicShape input){
         shape = input;
     }
@@ -32,7 +46,7 @@ public class Enemy : Entity {
         return this.HP;
     }
 
-    public int GetSpeed(){
+    public float GetSpeed(){
         return this.Speed;
     }
 }

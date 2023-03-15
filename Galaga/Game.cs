@@ -9,6 +9,7 @@ using DIKUArcade.Input;
 using DIKUArcade.Physics;
 using System.Collections.Generic;
 using Galaga.Squadron;
+using Galaga.MovementStrategy;
 
 
 namespace Galaga;
@@ -40,6 +41,11 @@ public class Game : DIKUGame, IGameEventProcessor {
     private Score Points = new Score(0);
 
     private ISquadron Squad;
+
+    private IMovementStrategy move;
+
+    private Health HP = new Health(new Vec2F (0.0f,0.0f),new Vec2F(0.1f,0.1f));
+
     public Game(WindowArgs windowArgs) : base(windowArgs) {
 
         player = new Player(
@@ -50,13 +56,15 @@ public class Game : DIKUGame, IGameEventProcessor {
 
         eventBus = new GameEventBus();
 
-        eventBus.InitializeEventBus(new List<GameEventType> { GameEventType.InputEvent, GameEventType.PlayerEvent });
+        eventBus.InitializeEventBus(new List<GameEventType> { GameEventType.InputEvent, GameEventType.PlayerEvent, GameEventType.WindowEvent});
 
         window.SetKeyEventHandler(KeyHandler);
 
         eventBus.Subscribe(GameEventType.InputEvent, this);
 
         eventBus.Subscribe(GameEventType.PlayerEvent, player);
+
+        eventBus.Subscribe(GameEventType.WindowEvent, this);
 
         enemyStridesBlue = ImageStride.CreateStrides(4, Path.Combine("Assets",
             "Images", "BlueMonster.png"));
@@ -70,6 +78,21 @@ public class Game : DIKUGame, IGameEventProcessor {
         System.Random rnd = new System.Random();
 
         int num = rnd.Next(1,6);
+
+        int numMove = rnd.Next(1,4);
+
+        switch (numMove){
+            case 1:
+                move = new NoMove();
+                break;
+                
+            case 2:
+                move = new Down();
+                break;
+            case 3:
+                move = new ZigZagDown();
+                break;
+        }
 
         switch (num){
             case 1:
@@ -117,6 +140,7 @@ public class Game : DIKUGame, IGameEventProcessor {
 
         playerShots.RenderEntities();
 
+        HP.RenderHealth();
     }
     public override void Update() {
 
@@ -126,6 +150,50 @@ public class Game : DIKUGame, IGameEventProcessor {
 
         IterateShots();
 
+        move.MoveEnemies(enemies);
+
+        enemies.Iterate(enemy => {
+            if (enemy.GetShape().Position.Y < 0.2f){
+                enemy.DeleteEntity();
+                HP.LoseHealth();
+            }
+        });
+
+        if (enemies.CountEntities() < 1){
+            System.Random rnd = new System.Random();
+            int num = rnd.Next(1,6);
+            int numMove = rnd.Next(1,4);
+            switch (numMove){
+                case 1:
+                    move = new NoMove();
+                    break;
+                case 2:
+                    move = new Down();
+                    break;
+                case 3:
+                    move = new ZigZagDown();
+                    break;
+            }
+            switch (num){
+                case 1:
+                    Squad = new ColSquad();
+                    break;
+                case 2:
+                    Squad = new DiamondSquad();
+                    break;
+                case 3:
+                    Squad = new DiagSquad();
+                    break;
+                case 4:
+                    Squad = new BoxSquad();
+                    break;
+                case 5:
+                    Squad = new ArrowSquad();
+                    break;
+            }
+            enemies = Squad.Enemies;
+            Squad.CreateEnemies(enemyStridesBlue,enemyStridesRed);
+        }
     }
 
     private void KeyPress(KeyboardKey key) {
@@ -229,9 +297,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     public void ProcessEvent(GameEvent gameEvent) {
         if (gameEvent.EventType == GameEventType.WindowEvent){
-            if (gameEvent.Message == "CLOSE"){
-                window.CloseWindow();
-            }
+            window.CloseWindow();
         }
     }
 
@@ -266,8 +332,10 @@ public class Game : DIKUGame, IGameEventProcessor {
 
                             Points.IncreaseTally();
                         }
+
                     }
                 });
+                
             }
         });
     }
