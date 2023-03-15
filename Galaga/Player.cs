@@ -1,14 +1,18 @@
 using DIKUArcade.Entities;
 
+using DIKUArcade.Events;
+
 using DIKUArcade.Graphics;
 
 using DIKUArcade.Math;
 
 namespace Galaga {
 
-    public class Player {
+    public class Player: IGameEventProcessor {
     
         private Entity entity;
+
+        private GameEventBus playerbus;
 
         private DynamicShape shape;
 
@@ -40,7 +44,7 @@ namespace Galaga {
             shape.Move();
         }
 
-        public void SetMoveLeft(bool val) {
+        private void SetMoveLeft(bool val) {
             if (val){
                 moveLeft = moveLeft - MOVEMENT_SPEED;
                 UpdateDirection();
@@ -51,7 +55,7 @@ namespace Galaga {
             }
         }
 
-        public void SetMoveRight(bool val) {
+        private void SetMoveRight(bool val) {
             if (val){
                 moveRight = moveRight + MOVEMENT_SPEED;
                 UpdateDirection();
@@ -62,7 +66,7 @@ namespace Galaga {
             }
         }
 
-        public void SetMoveUp(bool val) {
+        private void SetMoveUp(bool val) {
             if (val){
                 moveUp = moveUp + MOVEMENT_SPEED;
                 UpdateDirection();
@@ -73,7 +77,7 @@ namespace Galaga {
             }
         }
 
-        public void SetMoveDown(bool val) {
+        private void SetMoveDown(bool val) {
             if (val){
                 moveDown = moveDown - MOVEMENT_SPEED;
                 UpdateDirection();
@@ -101,6 +105,48 @@ namespace Galaga {
 
         public Vec2F GetPosition(){
             return shape.Position;
+        }
+
+        public void ProcessEvent(GameEvent gameEvent) {
+            switch (gameEvent.Message){
+
+                case "LEFT":
+                    this.SetMoveLeft(true);
+                    break;
+
+                case "NOTLEFT":
+                    this.SetMoveLeft(false);
+                    break;
+                
+                case "RIGHT":
+                    this.SetMoveRight(true);
+                    break;
+
+                case "NOTRIGHT":
+                    this.SetMoveRight(false);
+                    break;
+
+                case "UP":
+                    this.SetMoveUp(true);
+                    break;
+
+                case "NOTUP":
+                    this.SetMoveUp(false);
+                    break;
+
+                case "DOWN":
+                    this.SetMoveDown(true);
+                    break;
+
+                case "NOTDOWN":
+                    this.SetMoveDown(false);
+                    break;
+                
+                default:
+                    break;
+                
+
+            }
         }
     }
 }
