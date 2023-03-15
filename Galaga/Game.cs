@@ -75,6 +75,7 @@ public class Game : DIKUGame, IGameEventProcessor {
             case 1:
                 Squad = new ColSquad();
                 break;
+                
             case 2:
                 Squad = new DiamondSquad();
                 break;
