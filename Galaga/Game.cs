@@ -44,15 +44,23 @@ public class Game : DIKUGame, IGameEventProcessor {
 
     private IMovementStrategy move;
 
-    private Health HP = new Health(new Vec2F (0.0f,0.0f),new Vec2F(0.1f,0.1f));
+    private Health HP;
+
+    private bool GameOver;
 
     public Game(WindowArgs windowArgs) : base(windowArgs) {
 
         player = new Player(
-
+        
         new DynamicShape(new Vec2F(0.45f, 0.1f), new Vec2F(0.1f, 0.1f)),
 
         new Image(Path.Combine("Assets", "Images", "Player.png")));
+
+        HP = new Health(new Vec2F (0.0f,0.0f),new Vec2F(0.2f,0.3f));
+
+        GameOver = false;
+
+        HP.GetDisplay().SetColor(new Vec3F (1.0f,1.0f,1.0f));
 
         eventBus = new GameEventBus();
 
@@ -132,10 +140,13 @@ public class Game : DIKUGame, IGameEventProcessor {
     
     public override void Render() {
         
-        enemies.RenderEntities();
-
-        player.Render();
-
+        if (!GameOver){
+            enemies.RenderEntities();
+        }
+        
+        if (!GameOver){
+            player.Render();
+        }
         enemyExplosions.RenderAnimations();
 
         playerShots.RenderEntities();
@@ -146,20 +157,27 @@ public class Game : DIKUGame, IGameEventProcessor {
 
         this.eventBus.ProcessEventsSequentially();
 
-        player.Move();
-
+        HP.UpdateHP();
+        if (!GameOver){
+            player.Move();
+        }
         IterateShots();
 
         move.MoveEnemies(enemies);
 
-        enemies.Iterate(enemy => {
-            if (enemy.GetShape().Position.Y < 0.2f){
-                enemy.DeleteEntity();
-                HP.LoseHealth();
-            }
-        });
+        if (!GameOver){
+            enemies.Iterate(enemy => {
+                if (enemy.GetShape().Position.Y < 0.2f){
+                    enemy.DeleteEntity();
+                    HP.LoseHealth();
+                    if (HP.GetHealth() == 0 && !GameOver){
+                        GameOver = true;
+                    }
+                }
+            });
+        }
 
-        if (enemies.CountEntities() < 1){
+        if (enemies.CountEntities() < 1 && !GameOver){
             System.Random rnd = new System.Random();
             int num = rnd.Next(1,6);
             int numMove = rnd.Next(1,4);
@@ -193,6 +211,7 @@ public class Game : DIKUGame, IGameEventProcessor {
             }
             enemies = Squad.Enemies;
             Squad.CreateEnemies(enemyStridesBlue,enemyStridesRed);
+            enemies.Iterate(enemy => {enemy.IncreaseSpeed();});
         }
     }
 

@@ -12,8 +12,6 @@ namespace Galaga {
     
         private Entity entity;
 
-        private GameEventBus playerbus;
-
         private DynamicShape shape;
 
         private float moveLeft = 0.0f;
@@ -30,7 +28,12 @@ namespace Galaga {
             entity = new Entity(shape, image);
             this.shape = shape;
         }
-        
+
+        public void DeletePlayer(){
+            entity.Shape.Position = new Vec2F (0.0f,0.0f);
+            entity.Shape.Extent = new Vec2F (0.0f,0.0f);
+        }
+
         public void Render() {
             entity.RenderEntity();
         }

@@ -49,4 +49,8 @@ public class Enemy : Entity {
     public float GetSpeed(){
         return this.Speed;
     }
+
+    public void IncreaseSpeed(){
+        this.Speed += 0.003f;
+    }
 }
