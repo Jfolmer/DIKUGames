@@ -5,6 +5,7 @@ using DIKUArcade;
 using DIKUArcade.Events;
 using DIKUArcade.State;
 using GalagaStates;
+using Galaga;
 
 
 namespace GalagaTests {
@@ -14,15 +15,15 @@ namespace GalagaTests {
     public void InitiateStateMachine() {
         DIKUArcade.GUI.Window.CreateOpenGLContext();
 
-        StateMachine = new Statemachine();
+        stateMachine = new StateMachine();
 
         GalagaBus.GetBus().InitializeEventBus(new List<GameEventType> 
             {GameEventType.GameStateEvent, GameEventType.InputEvent});
 
-        GalagaBus.GetBus().Subscribe(GameEventType.GameStateEvent, this);
-        GalagaBus.GetBus().Subscribe(GameEventType.InputEvent, this);
+        GalagaBus.GetBus().Subscribe(GameEventType.GameStateEvent, stateMachine);
+        GalagaBus.GetBus().Subscribe(GameEventType.InputEvent, stateMachine);
     }
-        private StateMachine stateMachine;
+    private StateMachine stateMachine;
     [Test]
     public void TestInitialState() {
         Assert.That(stateMachine.ActiveState, Is.InstanceOf<MainMenu>());

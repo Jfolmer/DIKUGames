@@ -1,10 +1,8 @@
 using DIKUArcade.Entities;
-
+using DIKUArcade.Graphics;
+using DIKUArcade.Math;
 using DIKUArcade.Events;
 
-using DIKUArcade.Graphics;
-
-using DIKUArcade.Math;
 
 namespace Galaga {
 
@@ -27,6 +25,9 @@ namespace Galaga {
         public Player(DynamicShape shape, IBaseImage image) {
             entity = new Entity(shape, image);
             this.shape = shape;
+
+            GalagaBus.GetBus().Subscribe(GameEventType.PlayerEvent, this);
+
         }
 
         public void DeletePlayer(){
