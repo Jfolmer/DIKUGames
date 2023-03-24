@@ -5,7 +5,7 @@ using GalagaStates;
 namespace Galaga.GalagaStates {
     public class StateMachine : IGameEventProcessor {
         public IGameState ActiveState { get; private set; }
-        private StateTransformer trans;
+
         public StateMachine() {
             GalagaBus.GetBus().Subscribe(GameEventType.GameStateEvent, this);
             GalagaBus.GetBus().Subscribe(GameEventType.InputEvent, this);
@@ -31,7 +31,6 @@ namespace Galaga.GalagaStates {
                     break;
 
                 case GameStateType.MainMenu:
-                    GamePaused.SetInstance();
                     GameRunning.SetInstance();
                     ActiveState = MainMenu.GetInstance();
                     break;

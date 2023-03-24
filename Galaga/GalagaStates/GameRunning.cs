@@ -132,11 +132,11 @@ namespace Galaga.GalagaStates {
             switch (key){
                 case KeyboardKey.Escape:
                     GalagaBus.GetBus().RegisterEvent(
-                                new GameEvent{EventType = GameEventType.GameStateEvent,
-                                Message = "CHANGE_STATE",
-                                StringArg1 = "GAME_PAUSED"
-                                }
-                            );
+                        new GameEvent{EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "GAME_PAUSED"
+                        }
+                    );
                     break;
 
                 case KeyboardKey.A:

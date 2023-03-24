@@ -99,12 +99,8 @@ namespace Galaga {
             shape.ChangeDirection(vec);
         }
         
-            public DynamicShape GetShape(){
+        public DynamicShape GetShape(){
             return shape;
-        }
-    
-        public void SetShape(DynamicShape input){
-            shape = input;
         }
 
         public Vec2F GetPosition(){
