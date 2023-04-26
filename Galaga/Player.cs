@@ -1,12 +1,12 @@
 using DIKUArcade.Entities;
-
 using DIKUArcade.Graphics;
-
 using DIKUArcade.Math;
+using DIKUArcade.Events;
+
 
 namespace Galaga {
 
-    public class Player {
+    public class Player: IGameEventProcessor {
     
         private Entity entity;
 
@@ -25,8 +25,16 @@ namespace Galaga {
         public Player(DynamicShape shape, IBaseImage image) {
             entity = new Entity(shape, image);
             this.shape = shape;
+
+            GalagaBus.GetBus().Subscribe(GameEventType.PlayerEvent, this);
+
         }
-        
+
+        public void DeletePlayer(){
+            entity.Shape.Position = new Vec2F (0.0f,0.0f);
+            entity.Shape.Extent = new Vec2F (0.0f,0.0f);
+        }
+
         public void Render() {
             entity.RenderEntity();
         }
@@ -40,7 +48,7 @@ namespace Galaga {
             shape.Move();
         }
 
-        public void SetMoveLeft(bool val) {
+        private void SetMoveLeft(bool val) {
             if (val){
                 moveLeft = moveLeft - MOVEMENT_SPEED;
                 UpdateDirection();
@@ -51,7 +59,7 @@ namespace Galaga {
             }
         }
 
-        public void SetMoveRight(bool val) {
+        private void SetMoveRight(bool val) {
             if (val){
                 moveRight = moveRight + MOVEMENT_SPEED;
                 UpdateDirection();
@@ -62,7 +70,7 @@ namespace Galaga {
             }
         }
 
-        public void SetMoveUp(bool val) {
+        private void SetMoveUp(bool val) {
             if (val){
                 moveUp = moveUp + MOVEMENT_SPEED;
                 UpdateDirection();
@@ -73,7 +81,7 @@ namespace Galaga {
             }
         }
 
-        public void SetMoveDown(bool val) {
+        private void SetMoveDown(bool val) {
             if (val){
                 moveDown = moveDown - MOVEMENT_SPEED;
                 UpdateDirection();
@@ -91,12 +99,54 @@ namespace Galaga {
             shape.ChangeDirection(vec);
         }
         
-            public DynamicShape GetShape(){
+        public DynamicShape GetShape(){
             return shape;
         }
-    
-        public void SetShape(DynamicShape input){
-            shape = input;
+
+        public Vec2F GetPosition(){
+            return shape.Position;
+        }
+
+        public void ProcessEvent(GameEvent gameEvent) {
+            switch (gameEvent.Message){
+
+                case "LEFT":
+                    this.SetMoveLeft(true);
+                    break;
+
+                case "NOTLEFT":
+                    this.SetMoveLeft(false);
+                    break;
+                
+                case "RIGHT":
+                    this.SetMoveRight(true);
+                    break;
+
+                case "NOTRIGHT":
+                    this.SetMoveRight(false);
+                    break;
+
+                case "UP":
+                    this.SetMoveUp(true);
+                    break;
+
+                case "NOTUP":
+                    this.SetMoveUp(false);
+                    break;
+
+                case "DOWN":
+                    this.SetMoveDown(true);
+                    break;
+
+                case "NOTDOWN":
+                    this.SetMoveDown(false);
+                    break;
+                
+                default:
+                    break;
+                
+
+            }
         }
     }
 }
