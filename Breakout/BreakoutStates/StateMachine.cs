@@ -9,7 +9,8 @@ namespace Breakout.BreakoutStates {
         public StateMachine() {
             BreakoutBus.GetBus().Subscribe(GameEventType.GameStateEvent, this);
             BreakoutBus.GetBus().Subscribe(GameEventType.InputEvent, this);
-            ActiveState = GameRunning.GetInstance();
+            ActiveState = MainMenu.GetInstance();
+            GameRunning.GetInstance();
         }
         public void ProcessEvent(GameEvent input) {
             if (input.Message == "CHANGE_STATE"){
@@ -21,7 +22,10 @@ namespace Breakout.BreakoutStates {
                 case GameStateType.GameRunning:
                     ActiveState = GameRunning.GetInstance();
                     break;
-                default: break;
+                case GameStateType.MainMenu:
+                    GameRunning.SetInstance();
+                    ActiveState = MainMenu.GetInstance();
+                    break;
             }
         }
     }
