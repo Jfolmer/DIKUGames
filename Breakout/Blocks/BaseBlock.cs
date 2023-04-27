@@ -20,7 +20,7 @@ namespace Breakout.Blocks{
         public void Hit(){
             HP--;
             if (HP == 0){
-                entity.DeleteEntity();
+                this.DeleteEntity();
             }
         }
     }
