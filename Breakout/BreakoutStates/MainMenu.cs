@@ -5,6 +5,7 @@ using DIKUArcade.Input;
 using System.IO;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
+using System;
 
 namespace Breakout.BreakoutStates {
     public class MainMenu : IGameState {
@@ -13,10 +14,11 @@ namespace Breakout.BreakoutStates {
         private Text[] menuButtons;
         private static int activeMenuButton = 1;
         private static int maxMenuButtons = 2;
+        private Random random;
         public MainMenu(){
 
             backGroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
-                new Image(Path.Combine("Assets", "Images", "shipit_titlescreen.png")));
+                new Image(Path.Combine("Assets", "Images", "BreakoutTitleScreen.png")));
 
             menuButtons = new []{
                 new Text("Quit", new Vec2F(0.3f,0.1f),new Vec2F(0.3f,0.3f)),
@@ -44,6 +46,13 @@ namespace Breakout.BreakoutStates {
         public void UpdateState() {}
         public void RenderState() {
 
+            random = new Random();
+
+            if (random.Next(1,100) == 1){
+                backGroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
+                new Image(Path.Combine("Assets", "Images", "shipit_titlescreen.png")));
+            }
+
             backGroundImage.RenderEntity();
 
             menuButtons[activeMenuButton].SetColor(new Vec3F(0.0f,0.8f,0.8f));
@@ -51,6 +60,8 @@ namespace Breakout.BreakoutStates {
             for (int i = 0; i <= menuButtons.Length - 1; i++) {
                 menuButtons[i].RenderText();
             }
+            backGroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
+                new Image(Path.Combine("Assets", "Images", "BreakoutTitleScreen.png")));
         }
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             if (action == KeyboardAction.KeyPress){

@@ -10,8 +10,6 @@ namespace Breakout.Blocks{
     public interface Block {
         Entity entity {get;}
         DynamicShape shape {get;}
-        float Y {get;}
-        float X {get;}
         int HP {get;set;}
         void Hit(){}
     }
