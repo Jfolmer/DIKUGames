@@ -5,16 +5,27 @@ using System.IO;
 namespace Breakout.Loader{
     public class AsciiReader{
 
-        protected List<string> Map;
+        private List<string> Map;
 
-        protected List<string> Metadata;
+        private List<string> Metadata {get;}
 
-        protected Dictionary<char, string> Legend;
+        private Dictionary<char, string> Legend {get;}
 
         public AsciiReader(){
             Map = new List<string>();
             Metadata = new List<string>();
             Legend = new Dictionary<char, string>();
+        }
+        public List<string> GetMap(){
+            return Map;
+        }
+
+        public List<string> GetMeta(){
+            return Metadata;
+        }
+
+        public Dictionary<char, string> GetLegend(){
+            return Legend;
         }
 
         public void Read(string filename){
@@ -42,10 +53,10 @@ namespace Breakout.Loader{
                 if (file[i].StartsWith("Legend:")){
                     int j = i + 1;
                     while (!file[j].StartsWith("Legend/")){
-                        file[j].Replace(")","");
-                        file[j].Replace(" ","");
+                        file[j] = file[j].Replace(")","");
+                        file[j] = file[j].Replace(" ","");
                         char fst = file[j][0];
-                        file[j].Replace(Char.ToString(fst),"");
+                        file[j] = file[j].Replace(Char.ToString(fst),"");
                         string indmad = file[j];
                         Legend.Add(fst,indmad);
                         j++;
