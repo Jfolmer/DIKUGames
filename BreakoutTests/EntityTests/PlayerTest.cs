@@ -1,4 +1,4 @@
-namespace BreakoutTests.LevelLoadingTests{
+namespace BreakoutTests.PlayerTests{
     [TestFixture]
     public class Tests{  
         [SetUp]
@@ -11,10 +11,10 @@ namespace BreakoutTests.LevelLoadingTests{
         private LevelLoader loader;
         private EntityContainer<Entity> blocks;
 
-        // [Test]
-        // public void EmptyTest(){
-            //reader.Read(Path.Combine("BreakoutTests","Assets","Levels","level1.txt"));
-            // Assert.AreEqual((reader.GetMap())[0],"");
-        //}
+        [Test]
+        public void EmptyTest(){
+            reader.Read(Path.Combine("BreakoutTests","Assets","Levels","level1.txt"));
+            Assert.AreEqual((reader.GetMap())[0],"");
+        }
     }
 }
