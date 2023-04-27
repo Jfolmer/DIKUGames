@@ -16,6 +16,7 @@ namespace Breakout.BreakoutStates{
     public class GameRunning : IGameState{
         private static GameRunning instance = null;
         private Player player;
+        private Entity backgroundImage;
         
         public GameRunning(){
             GameInit();
@@ -26,6 +27,11 @@ namespace Breakout.BreakoutStates{
             new DynamicShape(new Vec2F(0.425f, 0.05f), new Vec2F(0.15f, 0.02f)),
 
             new Image(Path.Combine("Assets", "Images", "player.png")));
+
+            backgroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
+                new Image(Path.Combine("Assets", "Images", "Overlay.png")));
+            
+            
         }
         public static void SetInstance(){
             instance = null;
@@ -89,6 +95,7 @@ namespace Breakout.BreakoutStates{
             player.Move();
         }
         public void RenderState() {
+            backgroundImage.RenderEntity();
             player.Render();
         }
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {

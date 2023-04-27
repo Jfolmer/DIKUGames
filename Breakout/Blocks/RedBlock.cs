@@ -12,13 +12,9 @@ namespace Breakout.Blocks{
             this.shape = shape;
             this.Image = new Image(Path.Combine("Assets", "Images", "red-block.png"));
             this.HP = 2;
-            this.X = shape.Position.X;
-            this.Y = shape.Position.Y;
         }
         public Entity entity {get;}
         public DynamicShape shape {get;}
-        public float Y {get;}
-        public float X {get;}
         public int HP {get;set;}
         public void Hit(){
             HP--;

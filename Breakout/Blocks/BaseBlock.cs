@@ -7,18 +7,15 @@ using Breakout;
 
 namespace Breakout.Blocks{
     public class BaseBlock :  Entity, Block{
-        public BaseBlock(DynamicShape shape, IBaseImage image, int startHP)
+        public BaseBlock(DynamicShape shape, IBaseImage image)
         : base(shape, image) {
             this.shape = shape;
             this.Image = image;
-            this.HP = 2;
-            this.X = shape.Position.X;
-            this.Y = shape.Position.Y;
+            this.HP = 1;
         }
         public Entity entity {get;}
         public DynamicShape shape {get;}
-        public float Y {get;}
-        public float X {get;}
+
         public int HP {get;set;}
         public void Hit(){
             HP--;
