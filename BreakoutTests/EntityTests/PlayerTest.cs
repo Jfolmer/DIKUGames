@@ -1,20 +1,40 @@
-namespace BreakoutTests.PlayerTests{
+using NUnit.Framework;
+using Breakout;
+using DIKUArcade.Entities;
+using DIKUArcade.Graphics;
+using DIKUArcade.Math;
+using DIKUArcade;
+using DIKUArcade.GUI;
+using DIKUArcade.Events;
+using DIKUArcade.Input;
+using System;
+using System.IO;
+
+namespace Breakout.Tests {
     [TestFixture]
-    public class Tests{  
+    public class PlayerTests {
+
+        private Player player;
+
         [SetUp]
-        public void Init(){
-            reader = new AsciiReader();
-            loader = new LevelLoader();
-            blocks = new EntityContainer<Entity>();
+        public void Setup() {
+            DIKUArcade.GUI.Window.CreateOpenGLContext();
+            var shape = new DynamicShape(new Vec2F(0.45f, 0.1f), new Vec2F(0.1f, 0.1f)); 
+            var image = new Image(Path.Combine("Assets", "Images", "Player.png"));
+            player = new Player(shape, image);
         }
-        private AsciiReader reader;
-        private LevelLoader loader;
-        private EntityContainer<Entity> blocks;
 
         [Test]
-        public void EmptyTest(){
-            reader.Read(Path.Combine("BreakoutTests","Assets","Levels","level1.txt"));
-            Assert.AreEqual((reader.GetMap())[0],"");
+        public void TestRender(){
+            Assert.DoesNotThrow(() => player.Render());
+        }
+
+        [Test]
+        public void TestMove(){
+            var Position = player.GetPosition();
+            player.Move();
+            var newPosition = player.GetPosition();
+            Assert.That(Position, Is.Not.EqualTo(newPosition));
         }
     }
 }
