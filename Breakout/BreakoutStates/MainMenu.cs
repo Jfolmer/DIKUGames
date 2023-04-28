@@ -12,8 +12,8 @@ namespace Breakout.BreakoutStates {
         private static MainMenu instance = null;
         private Entity backGroundImage;
         private Text[] menuButtons;
-        private static int activeMenuButton = 1;
-        private static int maxMenuButtons = 2;
+        private static int activeMenuButton = 2;
+        private static int maxMenuButtons = 3;
         private Random random;
         public MainMenu(){
 
@@ -22,7 +22,8 @@ namespace Breakout.BreakoutStates {
 
             menuButtons = new []{
                 new Text("Quit", new Vec2F(0.3f,0.1f),new Vec2F(0.3f,0.3f)),
-                new Text("New Game", new Vec2F(0.3f,0.2f),new Vec2F(0.3f,0.3f))
+                new Text("Level Select", new Vec2F(0.3f,0.2f),new Vec2F(0.3f,0.3f)),
+                new Text("New Game", new Vec2F(0.3f,0.3f),new Vec2F(0.3f,0.3f))
             };
             
             menuButtons[0].SetColor(new Vec3F(1.0f,1.0f,1.0f));
@@ -31,7 +32,7 @@ namespace Breakout.BreakoutStates {
             
             activeMenuButton = 2;
 
-            maxMenuButtons = 2;
+            maxMenuButtons = 3;
         }
         public static MainMenu GetInstance() {
             if (MainMenu.instance == null) {
@@ -41,7 +42,7 @@ namespace Breakout.BreakoutStates {
             return MainMenu.instance;
         }
         public void ResetState(){
-            activeMenuButton = 1;
+            activeMenuButton = 2;
         }
         public void UpdateState() {}
         public void RenderState() {
@@ -78,6 +79,10 @@ namespace Breakout.BreakoutStates {
                             activeMenuButton--;
                         }
                         break;
+                    case KeyboardKey.Escape:
+                        BreakoutBus.GetBus().RegisterEvent(
+                            new GameEvent {EventType = GameEventType.WindowEvent, From = this, Message = "CLOSE"});
+                        break;
                     case KeyboardKey.Enter:
                         switch (activeMenuButton){
                             case 0:
@@ -88,7 +93,16 @@ namespace Breakout.BreakoutStates {
                                 BreakoutBus.GetBus().RegisterEvent(
                                     new GameEvent{EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",
-                                        StringArg1 = "GAME_RUNNING"
+                                        StringArg1 = "LEVEL_SELECTOR"
+                                    }
+                                );
+                                break;
+                            case 2:
+                                BreakoutBus.GetBus().RegisterEvent(
+                                    new GameEvent{EventType = GameEventType.GameStateEvent,
+                                        Message = "CHANGE_STATE",
+                                        StringArg1 = "GAME_RUNNING",
+                                        StringArg2 = "Level1"
                                     }
                                 );
                                 break;

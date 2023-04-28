@@ -22,6 +22,7 @@ namespace Breakout.BreakoutStates{
         private AsciiReader reader;
         private LevelLoader loader;
         private EntityContainer<Entity> blocks;
+        public static int ActiveLevel;
         public GameRunning(){
             GameInit();
         }
@@ -38,9 +39,33 @@ namespace Breakout.BreakoutStates{
             reader = new AsciiReader();
             loader = new LevelLoader();
 
-            reader.Read(Path.Combine("Breakout","Assets", "Levels", "central-mass.txt"));
+            switch (ActiveLevel){
+                case 1:
+                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "level1.txt"));
+                    break;
+                case 2:
+                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "level2.txt"));
+                    break;
+                case 3:
+                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "level3.txt"));
+                    break;
+                case 4:
+                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "wall.txt"));
+                    break;
+                case 5:
+                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "columns.txt"));
+                    break;
+                case 6:
+                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "central-mass.txt"));
+                    break;
+                default:
+                    break;
+            }
 
             blocks = loader.ReadLevel(reader.GetMap(),reader.GetMeta(),reader.GetLegend());
+        }
+        public static void SetLevel(int lvl){
+            ActiveLevel = lvl;
         }
         public static void SetInstance(){
             instance = null;
@@ -61,6 +86,15 @@ namespace Breakout.BreakoutStates{
                 
                 case KeyboardKey.Right:
                     BreakoutBus.GetBus().RegisterEvent(new GameEvent {EventType = GameEventType.PlayerEvent, To = player, Message = "RIGHT"});
+                    break;
+                
+                case KeyboardKey.Escape:
+                    BreakoutBus.GetBus().RegisterEvent(
+                        new GameEvent{EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "GAME_PAUSED"
+                        }
+                    );
                     break;
 
                 default:
