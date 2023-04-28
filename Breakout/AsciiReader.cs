@@ -56,8 +56,10 @@ namespace Breakout.Loader{
                         file[j] = file[j].Replace(")","");
                         file[j] = file[j].Replace(" ","");
                         char fst = file[j][0];
-                        file[j] = file[j].Replace(Char.ToString(fst),"");
-                        string indmad = file[j];
+                        string indmad = "";
+                        for (int a = 1; a < file[j].Length; a++){
+                            indmad = indmad + file[j][a];
+                        }
                         Legend.Add(fst,indmad);
                         j++;
                     }
