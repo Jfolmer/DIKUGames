@@ -6,7 +6,7 @@ using DIKUArcade.Events;
 using Breakout;
 
 namespace Breakout.Blocks{
-    public class BaseBlock :  Entity, Block{
+    public class BaseBlock :  Entity{
         public BaseBlock(DynamicShape shape, IBaseImage image)
         : base(shape, image) {
             this.shape = shape;

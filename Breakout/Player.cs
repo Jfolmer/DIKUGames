@@ -59,8 +59,6 @@ namespace Breakout {
             }
         }
 
-
-
         private void UpdateDirection(){
             float sumX = moveRight + moveLeft ;
             Vec2F vec = new Vec2F (sumX,0.0f);
@@ -95,8 +93,6 @@ namespace Breakout {
 
                 default:
                     break;
-                
-
             }
         }
     }
