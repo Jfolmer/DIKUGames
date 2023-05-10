@@ -39,7 +39,7 @@ namespace BreakoutTests.LevelLoadingTests{
         public void MetaTest(){
             reader = new AsciiReader();
             reader?.Read(Path.Combine("Assets","Levels","columns.txt"));
-            Assert.AreEqual(reader?.GetMeta()[0], "Name: Columns");
+            Assert.AreEqual(reader?.GetMeta()["Columns"], "Name:");
         }
 
         [Test]

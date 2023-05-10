@@ -20,22 +20,22 @@ namespace Breakout.BreakoutStates {
                     GameRunning.SetInstance();
                     switch (input.StringArg2){
                         case "Level1":
-                            GameRunning.SetLevel(1);
+                            GameRunning.SetLevel("level1.txt");
                             break;
                         case "Level2":
-                            GameRunning.SetLevel(2);
+                            GameRunning.SetLevel("level2.txt");
                             break;
                         case "Level3":
-                            GameRunning.SetLevel(3);
+                            GameRunning.SetLevel("level3.txt");
                             break;
                         case "Wall":
-                            GameRunning.SetLevel(4);
+                            GameRunning.SetLevel("wall.txt");
                             break;
                         case "Columns":
-                            GameRunning.SetLevel(5);
+                            GameRunning.SetLevel("columns.txt");
                             break;
                         case "CentralMass":
-                            GameRunning.SetLevel(6);
+                            GameRunning.SetLevel("central-mass.txt");
                             break;
                     }
                 }
@@ -48,11 +48,9 @@ namespace Breakout.BreakoutStates {
                     GamePaused.SetInstance();
                     ActiveState = GameRunning.GetInstance();
                     break;
-
                 case GameStateType.GamePaused:
                     ActiveState = GamePaused.GetInstance();
                     break;
-
                 case GameStateType.MainMenu:
                     GameRunning.SetInstance();
                     ActiveState = MainMenu.GetInstance();
