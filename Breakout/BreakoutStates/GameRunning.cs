@@ -21,8 +21,8 @@ namespace Breakout.BreakoutStates{
         private Entity backgroundImage;
         private AsciiReader reader;
         private LevelLoader loader;
-        private EntityContainer<Entity> blocks;
-        public static int ActiveLevel;
+        private EntityContainer<BaseBlock> blocks;
+        public static string ActiveLevel;
         public GameRunning(){
             GameInit();
         }
@@ -39,32 +39,9 @@ namespace Breakout.BreakoutStates{
             reader = new AsciiReader();
             loader = new LevelLoader();
 
-            switch (ActiveLevel){
-                case 1:
-                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "level1.txt"));
-                    break;
-                case 2:
-                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "level2.txt"));
-                    break;
-                case 3:
-                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "level3.txt"));
-                    break;
-                case 4:
-                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "wall.txt"));
-                    break;
-                case 5:
-                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "columns.txt"));
-                    break;
-                case 6:
-                    reader.Read(Path.Combine("Breakout","Assets", "Levels", "central-mass.txt"));
-                    break;
-                default:
-                    break;
-            }
-
-            blocks = loader.ReadLevel(reader.GetMap(),reader.GetMeta(),reader.GetLegend());
+            LevelChange(ActiveLevel);
         }
-        public static void SetLevel(int lvl){
+        public static void SetLevel(string lvl){
             ActiveLevel = lvl;
         }
         public static void SetInstance(){
@@ -87,6 +64,9 @@ namespace Breakout.BreakoutStates{
                 case KeyboardKey.Right:
                     BreakoutBus.GetBus().RegisterEvent(new GameEvent {EventType = GameEventType.PlayerEvent, To = player, Message = "RIGHT"});
                     break;
+                case KeyboardKey.Space:
+                    blocks.Iterate(block => block.Hit());
+                    break;
                 
                 case KeyboardKey.Escape:
                     BreakoutBus.GetBus().RegisterEvent(
@@ -100,6 +80,15 @@ namespace Breakout.BreakoutStates{
                 default:
                     break;
             }
+        }
+        private void LevelChange(string Lvl){
+            if (Lvl != null){
+                reader.Read(Path.Combine("Breakout","Assets", "Levels", Lvl));
+            }
+            else {
+                reader.Read(Path.Combine("Breakout","Assets", "Levels", "level1.txt"));
+            }
+            blocks = loader.ReadLevel(reader.GetMap(),reader.GetMeta(),reader.GetLegend());
         }
         private void KeyRelease(KeyboardKey key) {
             switch (key){
@@ -136,6 +125,24 @@ namespace Breakout.BreakoutStates{
         }
         public void UpdateState() {
             player.Move();
+            blocks.Iterate(block =>
+                block.GetHP()
+            );
+            if (ActiveLevel != "level3.txt" && blocks.CountEntities() == 0){
+                switch (ActiveLevel){
+                    case "level1.txt":
+                        SetLevel("level2.txt");
+                        ResetState();
+                        break;
+                    case "level2.txt":
+                        SetLevel("level3.txt");
+                        ResetState();
+                        break;
+                }
+            } else if (ActiveLevel == "level3.txt" && blocks.CountEntities() == 20){
+                SetLevel("level1.txt");
+                ResetState();
+            }
         }
         public void RenderState() {
             player.Render();
