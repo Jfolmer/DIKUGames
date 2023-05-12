@@ -117,7 +117,7 @@ namespace Breakout.BreakoutStates {
                                     new GameEvent{EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",
                                         StringArg1 = "GAME_RUNNING",
-                                        StringArg2 = "Wall"
+                                        StringArg2 = "wall.txt"
                                     }
                                 );
                                 break;
@@ -126,7 +126,7 @@ namespace Breakout.BreakoutStates {
                                     new GameEvent{EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",
                                         StringArg1 = "GAME_RUNNING",
-                                        StringArg2 = "CentralMass"
+                                        StringArg2 = "central-mass.txt"
                                     }
                                 );
                                 break;
@@ -135,7 +135,7 @@ namespace Breakout.BreakoutStates {
                                     new GameEvent{EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",
                                         StringArg1 = "GAME_RUNNING",
-                                        StringArg2 = "Columns"
+                                        StringArg2 = "columns.txt"
                                     }
                                 );
                                 break;
@@ -144,7 +144,7 @@ namespace Breakout.BreakoutStates {
                                     new GameEvent{EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",
                                         StringArg1 = "GAME_RUNNING",
-                                        StringArg2 = "Level3"
+                                        StringArg2 = "level3.txt"
                                     }
                                 );
                                 break;
@@ -153,7 +153,7 @@ namespace Breakout.BreakoutStates {
                                     new GameEvent{EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",
                                         StringArg1 = "GAME_RUNNING",
-                                        StringArg2 = "Level2"
+                                        StringArg2 = "level2.txt"
                                     }
                                 );
                                 break;
@@ -162,7 +162,7 @@ namespace Breakout.BreakoutStates {
                                     new GameEvent{EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",
                                         StringArg1 = "GAME_RUNNING",
-                                        StringArg2 = "Level1"
+                                        StringArg2 = "level1.txt"
                                     }
                                 );
                                 break;

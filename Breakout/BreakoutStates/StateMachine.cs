@@ -18,26 +18,7 @@ namespace Breakout.BreakoutStates {
             if (input.Message == "CHANGE_STATE"){
                 if (input.StringArg1 == "GAME_RUNNING" && input.StringArg2 != ""){
                     GameRunning.SetInstance();
-                    switch (input.StringArg2){
-                        case "Level1":
-                            GameRunning.SetLevel("level1.txt");
-                            break;
-                        case "Level2":
-                            GameRunning.SetLevel("level2.txt");
-                            break;
-                        case "Level3":
-                            GameRunning.SetLevel("level3.txt");
-                            break;
-                        case "Wall":
-                            GameRunning.SetLevel("wall.txt");
-                            break;
-                        case "Columns":
-                            GameRunning.SetLevel("columns.txt");
-                            break;
-                        case "CentralMass":
-                            GameRunning.SetLevel("central-mass.txt");
-                            break;
-                    }
+                    GameRunning.SetLevel(input.StringArg2);
                 }
                 SwitchState(StateTransformer.TransformStringToState(input.StringArg1));
             }
