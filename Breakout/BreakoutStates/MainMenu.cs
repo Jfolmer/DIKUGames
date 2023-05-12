@@ -102,7 +102,7 @@ namespace Breakout.BreakoutStates {
                                     new GameEvent{EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",
                                         StringArg1 = "GAME_RUNNING",
-                                        StringArg2 = "Level1"
+                                        StringArg2 = "level1.txt"
                                     }
                                 );
                                 break;
