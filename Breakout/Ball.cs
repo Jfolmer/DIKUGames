@@ -12,12 +12,13 @@ using System.Collections.Generic;
 namespace Breakout {
     public class Ball : Entity {
         private Entity entity;
-        private DynamicShape shape;
-        private Vec2F velocity;
-        private const float speed = 0.04f;
-        private bool launched;
+        public DynamicShape ballshape;
+        public Vec2F velocity;
+        public const float speed = 0.04f;
+        public bool launched;
+
         public Ball(DynamicShape shape, IBaseImage image) : base(shape, image) {
-            this.shape = shape;
+            this.ballshape = shape;
             this.Image = new Image(Path.Combine("Assets", "Images", "ball.png"));
             this.velocity = new Vec2F(0.012f, 0.012f);
             this.launched = true;
@@ -27,7 +28,7 @@ namespace Breakout {
             entity.RenderEntity();
         }
         public void UpdateDirection(float xDirection, float yDirection) {
-            (shape.AsDynamicShape()).ChangeDirection(new Vec2F(xDirection, yDirection));
+            (ballshape.AsDynamicShape()).ChangeDirection(new Vec2F(xDirection, yDirection));
         }
 
         public void Launch(Vec2F direction) {
@@ -40,28 +41,24 @@ namespace Breakout {
                 this.launched = true;
             }
         }
-
         public void Move() {
             if (launched) {
-                shape.Move(velocity);
+                ballshape.Move(velocity);
 
-                if (shape.Position.Y + shape.Extent.Y > 1.0f) { // toppen
-                    float overlap = shape.Position.Y + shape.Extent.Y - 1.0f;
-                    shape.Position = new Vec2F(shape.Position.X, 1.0f - shape.Extent.Y - overlap);
+                if (ballshape.Position.Y + ballshape.Extent.Y > 1.0f) { // toppen
+                    float overlap = ballshape.Position.Y + ballshape.Extent.Y - 1.0f;
+                    ballshape.Position = new Vec2F(ballshape.Position.X, 1.0f - ballshape.Extent.Y - overlap);
                     velocity = new Vec2F(velocity.X, -velocity.Y);
 
-                } else if (shape.Position.X < 0.0f) { // venstre
-                    shape.Position = new Vec2F(0.0f, shape.Position.Y);
+                } else if (ballshape.Position.X < 0.0f) { // venstre
+                    ballshape.Position = new Vec2F(0.0f, ballshape.Position.Y);
+                    velocity = new Vec2F(-velocity.X, velocity.Y);
+                
+                } else if (ballshape.Position.X + ballshape.Extent.X > 1.0f) { // højre
+                    ballshape.Position = new Vec2F(1.0f - ballshape.Extent.X, ballshape.Position.Y);
                     velocity = new Vec2F(-velocity.X, velocity.Y);
 
-                } else if (shape.Position.X + shape.Extent.X > 1.0f) { // højre
-                    shape.Position = new Vec2F(1.0f - shape.Extent.X, shape.Position.Y);
-                    velocity = new Vec2F(-velocity.X, velocity.Y);
-
-/*                 } else if (CollisionDetection.Aabb(shape.AsDynamicShape(), other.AsDynamicShape())) { // player
-                    velocity = new Vec2F(velocity.X, velocity.Y); */
-
-                } else if (shape.Position.Y + shape.Extent.Y < 0.0f) { // bunden
+                } else if (ballshape.Position.Y + ballshape.Extent.Y < 0.0f) { // bunden
                     this.DeleteEntity();
                 }
             }

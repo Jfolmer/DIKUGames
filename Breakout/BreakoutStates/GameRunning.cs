@@ -130,6 +130,20 @@ namespace Breakout.BreakoutStates{
         }
         public void UpdateState() {
             player.Move();
+            blocks.Iterate(block => {
+                if (CollisionDetection.Aabb(ball.ballshape, block.shape).Collision){
+                    System.Console.WriteLine("test");
+                    ball.ballshape.AsDynamicShape().ChangeDirection(ball.velocity);
+                    ball.velocity = new Vec2F(ball.velocity.X, ball.velocity.Y);
+                    ball.UpdateDirection((ball.ballshape).Direction.X,-(ball.ballshape).Direction.Y);
+                }
+            });
+                if (CollisionDetection.Aabb(ball.ballshape, player.GetShape().AsStationaryShape()).Collision) {
+                    System.Console.WriteLine("test");
+                    ball.ballshape.AsDynamicShape().ChangeDirection(ball.velocity);
+                    ball.velocity = new Vec2F(ball.velocity.X, ball.velocity.Y);
+                    ball.UpdateDirection((ball.ballshape).Direction.X,-(ball.ballshape).Direction.Y);                  
+                }
             ball.Move();
             blocks.Iterate(block =>
                 block.GetHP()
@@ -149,6 +163,8 @@ namespace Breakout.BreakoutStates{
                 SetLevel("level1.txt");
                 ResetState();
             }
+        }
+        public void Collide() {
         }
         public void RenderState() {
             player.Render();
