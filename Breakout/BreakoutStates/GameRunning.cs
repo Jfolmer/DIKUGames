@@ -17,6 +17,7 @@ namespace Breakout.BreakoutStates{
 
     public class GameRunning : IGameState{
         private static GameRunning instance = null;
+        private Ball ball;
         private Player player;
         private Entity backgroundImage;
         private AsciiReader reader;
@@ -28,11 +29,15 @@ namespace Breakout.BreakoutStates{
         }
         public void GameInit(){
             player = new Player(
-        
-            new DynamicShape(new Vec2F(0.425f, 0.02f), new Vec2F(0.17f, 0.02f)),
+                new DynamicShape(new Vec2F(0.425f, 0.02f), new Vec2F(0.17f, 0.02f)),
+                new Image(Path.Combine("Assets", "Images", "player.png"))
+            );
 
-            new Image(Path.Combine("Assets", "Images", "player.png")));
-
+            ball = new Ball(
+            new DynamicShape(new Vec2F(0.5f, 0.01f), new Vec2F(0.03f, 0.03f)),
+            new Image(Path.Combine("Assets", "Images", "ball.png"))
+            );
+            
             backgroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
                 new Image(Path.Combine("Assets", "Images", "Overlay.png")));
             
@@ -125,6 +130,7 @@ namespace Breakout.BreakoutStates{
         }
         public void UpdateState() {
             player.Move();
+            ball.Move();
             blocks.Iterate(block =>
                 block.GetHP()
             );
@@ -147,6 +153,7 @@ namespace Breakout.BreakoutStates{
         public void RenderState() {
             player.Render();
             blocks.RenderEntities();
+            ball.Render();
         }
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             if (action == KeyboardAction.KeyPress){
@@ -156,5 +163,6 @@ namespace Breakout.BreakoutStates{
                 KeyRelease(key);
             }
         }
+
     }
 }
