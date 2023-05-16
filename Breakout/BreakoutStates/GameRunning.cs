@@ -70,7 +70,7 @@ namespace Breakout.BreakoutStates{
                     BreakoutBus.GetBus().RegisterEvent(new GameEvent {EventType = GameEventType.PlayerEvent, To = player, Message = "RIGHT"});
                     break;
                 case KeyboardKey.Space:
-                    blocks.Iterate(block => block.Hit());
+                    ball.Launch(new Vec2F(1.0f, 1.0f));
                     break;
                 
                 case KeyboardKey.Escape:
@@ -131,18 +131,20 @@ namespace Breakout.BreakoutStates{
         public void UpdateState() {
             player.Move();
             blocks.Iterate(block => {
-                if (CollisionDetection.Aabb(ball.ballshape, block.shape).Collision){
-                    System.Console.WriteLine("test");
-                    ball.ballshape.AsDynamicShape().ChangeDirection(ball.velocity);
-                    ball.velocity = new Vec2F(ball.velocity.X, ball.velocity.Y);
-                    ball.UpdateDirection((ball.ballshape).Direction.X,-(ball.ballshape).Direction.Y);
+                if (CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir == CollisionDirection.CollisionDirDown 
+                    || CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir == CollisionDirection.CollisionDirUp){
+                    System.Console.WriteLine("test1");
+                    ball.UpdateDirection((ball.shape).Direction.X,-(ball.shape).Direction.Y);
+                }
+                else if (CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir == CollisionDirection.CollisionDirRight 
+                    || CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir == CollisionDirection.CollisionDirLeft){
+                    System.Console.WriteLine("test2");
+                    ball.UpdateDirection(-(ball.shape).Direction.X,(ball.shape).Direction.Y);
                 }
             });
-                if (CollisionDetection.Aabb(ball.ballshape, player.GetShape().AsStationaryShape()).Collision) {
+                if (CollisionDetection.Aabb(ball.shape, player.GetShape()).Collision) {
                     System.Console.WriteLine("test");
-                    ball.ballshape.AsDynamicShape().ChangeDirection(ball.velocity);
-                    ball.velocity = new Vec2F(ball.velocity.X, ball.velocity.Y);
-                    ball.UpdateDirection((ball.ballshape).Direction.X,-(ball.ballshape).Direction.Y);                  
+                    ball.UpdateDirection((ball.shape).Direction.X,-(ball.shape).Direction.Y);                  
                 }
             ball.Move();
             blocks.Iterate(block =>

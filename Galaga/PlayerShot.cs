@@ -18,9 +18,7 @@ public class PlayerShot : Entity {
         }
     
     public void Move(){
-
         this.Shape.Move(direction);
-
     }
 
     public void SetShape(DynamicShape input){
