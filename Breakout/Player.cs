@@ -11,19 +11,14 @@ namespace Breakout {
         private Entity entity;
 
         private DynamicShape shape;
-
         private float moveLeft = 0.0f;
-
         private float moveRight = 0.0f;
         public bool Rocket;
-
         private float MOVEMENT_SPEED = 0.015f;
-
         public Player(DynamicShape shape, IBaseImage image) {
             entity = new Entity(shape, image);
             this.shape = shape;
             this.Rocket = false;
-
             BreakoutBus.GetBus().Subscribe(GameEventType.PlayerEvent, this);
         }
 

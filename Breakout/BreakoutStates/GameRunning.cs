@@ -27,6 +27,7 @@ namespace Breakout.BreakoutStates{
         private EntityContainer<RocketShot> rockets;
         private List<Image> explosionStrides = ImageStride.CreateStrides(8, Path.Combine("Assets", "Images", "Explosion.png"));
         private AnimationContainer Explosions;
+        private int Lives;
         public static string ActiveLevel;
         public GameRunning(){
             GameInit();
@@ -52,6 +53,7 @@ namespace Breakout.BreakoutStates{
             powerUps = new EntityContainer<PowerUp>();
             rockets = new EntityContainer<RocketShot>();
             Explosions = new AnimationContainer(blocks.CountEntities());
+            Lives = 3;
         }
         public static void SetLevel(string lvl){
             ActiveLevel = lvl;
@@ -155,15 +157,30 @@ namespace Breakout.BreakoutStates{
                     || col == CollisionDirection.CollisionDirUp){
                     SpawnPowerUp(block);
                     block.Hit();
-                    ball.UpdateDirection((ball.shape).Direction.X,-(ball.shape).Direction.Y);
+                    ball.UpdateDirection(ball.AngleRandomizer((ball.shape).Direction.X),-ball.AngleRandomizer((ball.shape).Direction.Y));
                 }
                 else if (col == CollisionDirection.CollisionDirRight 
                     || col == CollisionDirection.CollisionDirLeft){
                     SpawnPowerUp(block);
                     block.Hit();
-                    ball.UpdateDirection(-(ball.shape).Direction.X,(ball.shape).Direction.Y);
-                } else if (ball.shape.Position.Y + ball.shape.Extent.Y < 0.0f) { // bunden
-                    GameInit();
+                    ball.UpdateDirection(-ball.AngleRandomizer((ball.shape).Direction.X),ball.AngleRandomizer((ball.shape).Direction.Y));
+                } else if (ball.IsDeleted()) {
+                    if (Lives >= 0){
+                        Lives--;
+                        player = new Player(
+                            new DynamicShape(new Vec2F(0.415f, 0.02f), new Vec2F(0.17f, 0.02f)),
+                            new Image(Path.Combine("Assets", "Images", "player.png"))
+                        );
+
+                        ball = new Ball(
+                            new DynamicShape(new Vec2F(0.5f, 0.015f), new Vec2F(0.03f, 0.03f)),
+                            new Image(Path.Combine("Assets", "Images", "SofieBold.png"))
+                        );
+                    }
+                    else{
+                        System.Console.WriteLine("Lose");
+                        GameInit();
+                    }
                 }
                 rockets.Iterate(rocket => {
                     var rocketcol = CollisionDetection.Aabb(rocket.Shape.AsDynamicShape(), block.shape).Collision;
@@ -232,8 +249,6 @@ namespace Breakout.BreakoutStates{
                 ResetState();
             }
         }
-        public void Collide() {
-        }
         public void SpawnPowerUp(BaseBlock block){
             Vec2F spawn = new Vec2F((float)block.shape.Position.X - 0.015f + (float)block.shape.Extent.X / (float)2,block.shape.Position.Y);
             System.Random rnd = new System.Random();
@@ -267,6 +282,32 @@ namespace Breakout.BreakoutStates{
                 rockets.RenderEntities();
             }
             Explosions.RenderAnimations();
+            RenderLives(Lives);
+        }
+        private void RenderLives(int input){
+            Entity heart0 = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(0.05f, 0.05f)),
+                new Image(Path.Combine("Assets", "Images", "heart_filled.png")));
+            Entity heart1 = new Entity(new StationaryShape(new Vec2F(0.0f,0.05f), new Vec2F(0.05f, 0.05f)),
+                new Image(Path.Combine("Assets", "Images", "heart_filled.png")));
+            Entity heart2 = new Entity(new StationaryShape(new Vec2F(0.0f,0.1f), new Vec2F(0.05f, 0.05f)),
+                new Image(Path.Combine("Assets", "Images", "heart_filled.png")));
+            switch (input){
+                case 1:
+                    heart1 = new Entity(new StationaryShape(new Vec2F(0.0f,0.05f), new Vec2F(0.05f, 0.05f)),
+                        new Image(Path.Combine("Assets", "Images", "heart_empty.png")));
+                    heart2 = new Entity(new StationaryShape(new Vec2F(0.0f,0.1f), new Vec2F(0.05f, 0.05f)),
+                        new Image(Path.Combine("Assets", "Images", "heart_empty.png")));
+                    break;
+                case 2:
+                    heart2 = new Entity(new StationaryShape(new Vec2F(0.0f,0.1f), new Vec2F(0.05f, 0.05f)),
+                        new Image(Path.Combine("Assets", "Images", "heart_empty.png")));
+                    break;
+                default:
+                    break;
+            }
+            heart0.RenderEntity();
+            heart1.RenderEntity();
+            heart2.RenderEntity();
         }
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             if (action == KeyboardAction.KeyPress){

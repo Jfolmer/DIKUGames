@@ -28,7 +28,10 @@ namespace Breakout {
         public void UpdateDirection(float xDirection, float yDirection) {
             (shape.AsDynamicShape()).ChangeDirection(new Vec2F(xDirection, yDirection));
         }
-
+        public float AngleRandomizer(float input){
+            Random rnd = new Random();
+            return (input + rnd.Next(-1,1) * 0.001f);
+        }
         public void Launch(Vec2F direction) {
             if (!launched) {
                 if (direction.Y < 0.0f) {
@@ -43,9 +46,9 @@ namespace Breakout {
         public void Move() {
             if (launched) {
                 if (shape.Position.Y + shape.Extent.Y > 1.0f) { // toppen
-                    this.shape.Direction = new Vec2F(shape.Direction.X, -shape.Direction.Y);
+                    this.shape.Direction = new Vec2F(AngleRandomizer(shape.Direction.X), -AngleRandomizer(shape.Direction.Y));
                 } else if (shape.Position.X < 0.0f || shape.Position.X + shape.Extent.X > 1.0f) { // venstre
-                    this.shape.Direction = new Vec2F(-shape.Direction.X, shape.Direction.Y);
+                    this.shape.Direction = new Vec2F(-AngleRandomizer(shape.Direction.X), AngleRandomizer(shape.Direction.Y));
                 } else if (shape.Position.Y + shape.Extent.Y < 0.0f) { // bunden
                     this.DeleteEntity();
                 }
