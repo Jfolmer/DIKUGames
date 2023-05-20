@@ -4,12 +4,13 @@ using System;
 
 namespace Breakout.Blocks{
     public class HardenedBlock :  BaseBlock{
-        public HardenedBlock(DynamicShape shape, IBaseImage image)
-        : base(shape, image) {
+        public HardenedBlock(DynamicShape shape, IBaseImage image, bool powerUp)
+        : base(shape, image, powerUp) {
             this.shape = shape;
             this.Image = image;
             this.HP = 2;
             this.BlockType = "Hardened";
+            this.PowerUp = powerUp;
         }
         public override Entity entity {get;}
         public override DynamicShape shape {get;}

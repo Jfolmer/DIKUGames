@@ -3,12 +3,13 @@ using DIKUArcade.Graphics;
 
 namespace Breakout.Blocks{
     public class BaseBlock : Entity{
-        public BaseBlock(DynamicShape shape, IBaseImage image)
+        public BaseBlock(DynamicShape shape, IBaseImage image, bool powerUp)
         : base(shape, image) {
             this.shape = shape;
             this.Image = image;
             this.HP = 1;
             this.BlockType = "BaseBlock";
+            this.PowerUp = powerUp;
         }
         public virtual Entity entity {get;}
         public virtual DynamicShape shape {get;}

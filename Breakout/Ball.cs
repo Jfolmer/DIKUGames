@@ -13,13 +13,12 @@ namespace Breakout {
     public class Ball : Entity {
         private Entity entity;
         public DynamicShape shape;
-        public Vec2F velocity;
         public const float speed = 0.02f;
         public bool launched;
 
         public Ball(DynamicShape shape, IBaseImage image) : base(shape, image) {
             this.shape = shape;
-            this.Image = new Image(Path.Combine("Assets", "Images", "ball.png"));
+            this.Image = image;
             this.launched = false;
             this.entity = this;
         }
@@ -37,7 +36,7 @@ namespace Breakout {
                 }
                 this.shape.Direction = direction;
                 float length = (float)System.Math.Sqrt(direction.X * direction.X + direction.Y * direction.Y);
-                this.velocity = direction / length * speed;
+                this.shape.Direction = direction / length * speed;
                 this.launched = true;
             }
         }
@@ -51,8 +50,8 @@ namespace Breakout {
                     this.DeleteEntity();
                 }
                 float length = (float)System.Math.Sqrt(shape.Direction.X * shape.Direction.X + shape.Direction.Y * shape.Direction.Y);
-                this.velocity = shape.Direction / length * speed;
-                shape.Move(velocity);
+                this.shape.Direction = shape.Direction / length * speed;
+                shape.Move(shape.Direction);
             }
         }
     }

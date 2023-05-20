@@ -23,28 +23,35 @@ namespace Breakout.BreakoutStates{
         private AsciiReader reader;
         private LevelLoader loader;
         private EntityContainer<BaseBlock> blocks;
+        private EntityContainer<PowerUp> powerUps;
+        private EntityContainer<RocketShot> rockets;
+        private List<Image> explosionStrides = ImageStride.CreateStrides(8, Path.Combine("Assets", "Images", "Explosion.png"));
+        private AnimationContainer Explosions;
         public static string ActiveLevel;
         public GameRunning(){
             GameInit();
         }
         public void GameInit(){
             player = new Player(
-                new DynamicShape(new Vec2F(0.425f, 0.02f), new Vec2F(0.17f, 0.02f)),
+                new DynamicShape(new Vec2F(0.415f, 0.02f), new Vec2F(0.17f, 0.02f)),
                 new Image(Path.Combine("Assets", "Images", "player.png"))
             );
 
             ball = new Ball(
-            new DynamicShape(new Vec2F(0.5f, 0.01f), new Vec2F(0.03f, 0.03f)),
-            new Image(Path.Combine("Assets", "Images", "ball.png"))
+            new DynamicShape(new Vec2F(0.5f, 0.015f), new Vec2F(0.03f, 0.03f)),
+            new Image(Path.Combine("Assets", "Images", "SofieBold.png"))
             );
             
             backgroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
-                new Image(Path.Combine("Assets", "Images", "Overlay.png")));
+                new Image(Path.Combine("Assets", "Images", "SpaceBackground.png")));
             
             reader = new AsciiReader();
             loader = new LevelLoader();
 
             LevelChange(ActiveLevel);
+            powerUps = new EntityContainer<PowerUp>();
+            rockets = new EntityContainer<RocketShot>();
+            Explosions = new AnimationContainer(blocks.CountEntities());
         }
         public static void SetLevel(string lvl){
             ActiveLevel = lvl;
@@ -71,6 +78,11 @@ namespace Breakout.BreakoutStates{
                     break;
                 case KeyboardKey.Space:
                     ball.Launch(new Vec2F(1.0f, 1.0f));
+                    if (player.Rocket){
+                        Vec2F pos = new Vec2F (player.GetShape().Position.X + player.GetShape().Extent.X / 2.0f,player.GetShape().Position.Y + player.GetShape().Extent.Y);
+                        var rocketStrides = new ImageStride(100,ImageStride.CreateStrides(5,Path.Combine("Assets","Images","RocketLaunched.png")));
+                        rockets.AddEntity(new RocketShot(pos,rocketStrides));
+                    }
                     break;
                 
                 case KeyboardKey.Escape:
@@ -128,28 +140,82 @@ namespace Breakout.BreakoutStates{
         public void ResetState(){
             GameInit();
         }
+        public void AddExplosion(Vec2F position, Vec2F extent) {
+            Explosions.AddAnimation(new StationaryShape(position,extent),
+            500, new ImageStride (8, explosionStrides));
+        }
         public void UpdateState() {
             player.Move();
+            if (!ball.launched){
+                ball.shape.Position = new Vec2F((player.GetShape().Position.X + player.GetShape().Extent.X * (float)0.45), ((float)player.GetShape().Position.Y + player.GetShape().Extent.Y));
+            }
             blocks.Iterate(block => {
-                if (CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir == CollisionDirection.CollisionDirDown 
-                    || CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir == CollisionDirection.CollisionDirUp){
-                    System.Console.WriteLine("test1");
+                var col = CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir;
+                if (col == CollisionDirection.CollisionDirDown 
+                    || col == CollisionDirection.CollisionDirUp){
+                    SpawnPowerUp(block);
+                    block.Hit();
                     ball.UpdateDirection((ball.shape).Direction.X,-(ball.shape).Direction.Y);
                 }
-                else if (CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir == CollisionDirection.CollisionDirRight 
-                    || CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir == CollisionDirection.CollisionDirLeft){
-                    System.Console.WriteLine("test2");
+                else if (col == CollisionDirection.CollisionDirRight 
+                    || col == CollisionDirection.CollisionDirLeft){
+                    SpawnPowerUp(block);
+                    block.Hit();
                     ball.UpdateDirection(-(ball.shape).Direction.X,(ball.shape).Direction.Y);
+                } else if (ball.shape.Position.Y + ball.shape.Extent.Y < 0.0f) { // bunden
+                    GameInit();
                 }
+                rockets.Iterate(rocket => {
+                    var rocketcol = CollisionDetection.Aabb(rocket.Shape.AsDynamicShape(), block.shape).Collision;
+                        if (rocket.Shape.Position.Y > 1.0f){
+                            rocket.DeleteEntity();
+                        }
+                        else if (rocketcol){
+                            AddExplosion(block.shape.Position,block.shape.Extent);
+                            block.Hit();
+                            SpawnPowerUp(block);
+                            rocket.DeleteEntity();
+                        }
+                });
             });
-                if (CollisionDetection.Aabb(ball.shape, player.GetShape()).Collision) {
-                    System.Console.WriteLine("test");
+            var PlayerCol = CollisionDetection.Aabb(ball.shape, player.GetShape());
+                if (PlayerCol.CollisionDir == CollisionDirection.CollisionDirUp || PlayerCol.CollisionDir == CollisionDirection.CollisionDirDown){
                     ball.UpdateDirection((ball.shape).Direction.X,-(ball.shape).Direction.Y);                  
+                }
+                else if (PlayerCol.CollisionDir == CollisionDirection.CollisionDirLeft || PlayerCol.CollisionDir == CollisionDirection.CollisionDirRight){
+                    ball.UpdateDirection(-(ball.shape).Direction.X,(ball.shape).Direction.Y);
                 }
             ball.Move();
             blocks.Iterate(block =>
                 block.GetHP()
             );
+            if (powerUps.CountEntities() != 0){
+                powerUps.Iterate(powerup => { 
+                    var col = CollisionDetection.Aabb(powerup.Shape.AsDynamicShape(),player.GetShape()).Collision;
+                    if (col) {
+                        switch (powerup.Type){
+                            case "+Speed":
+                                player.ChangeSpeed(2.0f);
+                                powerup.DeleteEntity();
+                                break;
+                            case "-Speed":
+                                player.ChangeSpeed(0.5f);
+                                powerup.DeleteEntity();
+                                break;
+                            case "Rocket":
+                                player.Rocket = true;
+                                powerup.DeleteEntity();
+                                break;
+                            case "BigBallsBaby":
+                                ball.Shape.Extent = new Vec2F(ball.Shape.Extent.X * 1.5f, ball.Shape.Extent.Y * 1.5f);
+                                powerup.DeleteEntity();
+                                break;
+                        }
+                    }
+                    powerup.Move();
+                });
+            }
+            rockets.Iterate(rocket => rocket.Move());
             if (ActiveLevel != "level3.txt" && blocks.CountEntities() == 0){
                 switch (ActiveLevel){
                     case "level1.txt":
@@ -168,10 +234,39 @@ namespace Breakout.BreakoutStates{
         }
         public void Collide() {
         }
+        public void SpawnPowerUp(BaseBlock block){
+            Vec2F spawn = new Vec2F((float)block.shape.Position.X - 0.015f + (float)block.shape.Extent.X / (float)2,block.shape.Position.Y);
+            System.Random rnd = new System.Random();
+            int rndNum = rnd.Next(1,5);
+            if (block.PowerUp){
+                switch (rndNum){
+                    case 1:
+                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "RocketPickUp.png")),"Rocket"));
+                        break;
+                    case 2:
+                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "BigPowerUp.png")),"BigBallsBaby"));
+                        break;
+                    case 3:
+                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "DoubleSpeedPowerUp.png")),"+Speed"));
+                        break;
+                    case 4: 
+                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "HalfSpeedPowerUp.png")),"-Speed"));
+                        break;
+                }
+            }
+        }
         public void RenderState() {
+            backgroundImage.RenderEntity();
             player.Render();
             blocks.RenderEntities();
             ball.Render();
+            if (powerUps.CountEntities() != 0){
+                powerUps.RenderEntities();
+            }
+            if (rockets.CountEntities() != 0){
+                rockets.RenderEntities();
+            }
+            Explosions.RenderAnimations();
         }
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             if (action == KeyboardAction.KeyPress){

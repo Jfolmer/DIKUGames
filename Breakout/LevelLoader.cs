@@ -24,18 +24,21 @@ namespace Breakout.Loader{
                         string imgPath = Legend[map[i][j]];
                         IBaseImage img = new Image(Path.Combine("Assets", "Images", imgPath));
                         if (!metadata.ContainsKey(char.ToString(map[i][j]))){
-                            output.AddEntity(new BaseBlock(new DynamicShape(pos,ext),img));
+                            output.AddEntity(new BaseBlock(new DynamicShape(pos,ext),img, false));
                         } else switch (metadata[char.ToString(map[i][j])]){
+                            case "PowerUp:":
+                                output.AddEntity(new BaseBlock(new DynamicShape(pos,ext),img, true));
+                                break;
                             case "Hardened:":
-                                HardenedBlock TomHardy = new HardenedBlock(new DynamicShape(pos,ext),img);
+                                HardenedBlock TomHardy = new HardenedBlock(new DynamicShape(pos,ext),img, false);
                                 TomHardy.ImagePath = Path.Combine("Assets", "Images", imgPath);
                                 output.AddEntity(TomHardy);
                                 break;
                             case "Unbreakable:":
-                                output.AddEntity(new UnbreakableBlock(new DynamicShape(pos,ext),img));
+                                output.AddEntity(new UnbreakableBlock(new DynamicShape(pos,ext),img, false));
                                 break;
                             default:
-                                output.AddEntity(new BaseBlock(new DynamicShape(pos,ext),img));
+                                output.AddEntity(new BaseBlock(new DynamicShape(pos,ext),img, false));
                                 break;
                         }
                     }

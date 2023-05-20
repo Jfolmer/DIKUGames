@@ -8,8 +8,8 @@ namespace BreakoutTests.BlockTest{
             Vec2F ext = new Vec2F(1.0f,0.9f);
             IBaseImage img = new Image(Path.Combine("Assets", "Images", "blue-block.png"));
             IBaseImage redimg = new Image(Path.Combine("Assets", "Images", "red-block.png"));
-            block = new BaseBlock(new DynamicShape(pos,ext),img);
-            redblock = new BaseBlock(new DynamicShape(pos,ext),redimg);
+            block = new BaseBlock(new DynamicShape(pos,ext),img, false);
+            redblock = new BaseBlock(new DynamicShape(pos,ext),redimg, false);
         }
         private BaseBlock? block;
         private BaseBlock? notblock;

@@ -15,12 +15,14 @@ namespace Breakout {
         private float moveLeft = 0.0f;
 
         private float moveRight = 0.0f;
+        public bool Rocket;
 
-        private const float MOVEMENT_SPEED = 0.01f;
+        private float MOVEMENT_SPEED = 0.015f;
 
         public Player(DynamicShape shape, IBaseImage image) {
             entity = new Entity(shape, image);
             this.shape = shape;
+            this.Rocket = false;
 
             BreakoutBus.GetBus().Subscribe(GameEventType.PlayerEvent, this);
         }
@@ -36,7 +38,9 @@ namespace Breakout {
             }
             shape.Move();
         }
-
+        public void ChangeSpeed(float input){
+            MOVEMENT_SPEED = MOVEMENT_SPEED * input;
+        }
         private void SetMoveLeft(bool val) {
             if (val){
                 moveLeft = moveLeft - MOVEMENT_SPEED;
