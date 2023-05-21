@@ -84,6 +84,7 @@ namespace Breakout.BreakoutStates{
                         Vec2F pos = new Vec2F (player.GetShape().Position.X + player.GetShape().Extent.X / 2.0f,player.GetShape().Position.Y + player.GetShape().Extent.Y);
                         var rocketStrides = new ImageStride(100,ImageStride.CreateStrides(5,Path.Combine("Assets","Images","RocketLaunched.png")));
                         rockets.AddEntity(new RocketShot(pos,rocketStrides));
+                        player.Rocket = false;
                     }
                     break;
                 
@@ -165,7 +166,7 @@ namespace Breakout.BreakoutStates{
                     block.Hit();
                     ball.UpdateDirection(-ball.AngleRandomizer((ball.shape).Direction.X),ball.AngleRandomizer((ball.shape).Direction.Y));
                 } else if (ball.IsDeleted()) {
-                    if (Lives >= 0){
+                    if (Lives > 1){
                         Lives--;
                         player = new Player(
                             new DynamicShape(new Vec2F(0.415f, 0.02f), new Vec2F(0.17f, 0.02f)),
@@ -178,8 +179,12 @@ namespace Breakout.BreakoutStates{
                         );
                     }
                     else{
-                        System.Console.WriteLine("Lose");
-                        GameInit();
+                        BreakoutBus.GetBus().RegisterEvent(
+                        new GameEvent{EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "GAME_OVER"
+                        }
+                    );
                     }
                 }
                 rockets.Iterate(rocket => {
@@ -212,11 +217,11 @@ namespace Breakout.BreakoutStates{
                     if (col) {
                         switch (powerup.Type){
                             case "+Speed":
-                                player.ChangeSpeed(2.0f);
+                                player.ChangeSpeed(1.5f);
                                 powerup.DeleteEntity();
                                 break;
-                            case "-Speed":
-                                player.ChangeSpeed(0.5f);
+                            case "+Width":
+                                player.GetShape().Extent.X = player.GetShape().Extent.X * 1.5f;
                                 powerup.DeleteEntity();
                                 break;
                             case "Rocket":
@@ -225,6 +230,37 @@ namespace Breakout.BreakoutStates{
                                 break;
                             case "BigBallsBaby":
                                 ball.Shape.Extent = new Vec2F(ball.Shape.Extent.X * 1.5f, ball.Shape.Extent.Y * 1.5f);
+                                powerup.DeleteEntity();
+                                break;
+                            case "+HP":
+                                Lives++;
+                                powerup.DeleteEntity();
+                                break;
+                            case "Bomb":
+                                if (Lives > 1){
+                                    Lives--;
+                                    player = new Player(
+                                        new DynamicShape(new Vec2F(0.415f, 0.02f), new Vec2F(0.17f, 0.02f)),
+                                        new Image(Path.Combine("Assets", "Images", "player.png"))
+                                    );
+
+                                    ball = new Ball(
+                                        new DynamicShape(new Vec2F(0.5f, 0.015f), new Vec2F(0.03f, 0.03f)),
+                                        new Image(Path.Combine("Assets", "Images", "SofieBold.png"))
+                                    );
+                                }
+                                else{
+                                    BreakoutBus.GetBus().RegisterEvent(
+                                        new GameEvent{EventType = GameEventType.GameStateEvent,
+                                            Message = "CHANGE_STATE",
+                                            StringArg1 = "GAME_OVER"
+                                        }
+                                    );
+                                }
+                                powerup.DeleteEntity();
+                                break;
+                            case "-Speed":
+                                player.ChangeSpeed(0.75f);
                                 powerup.DeleteEntity();
                                 break;
                         }
@@ -252,20 +288,35 @@ namespace Breakout.BreakoutStates{
         public void SpawnPowerUp(BaseBlock block){
             Vec2F spawn = new Vec2F((float)block.shape.Position.X - 0.015f + (float)block.shape.Extent.X / (float)2,block.shape.Position.Y);
             System.Random rnd = new System.Random();
-            int rndNum = rnd.Next(1,5);
-            if (block.PowerUp){
+            int rndNum = rnd.Next(1,11);
+            if (block.BlockType != "Hardened" && block.BlockType != "Unbreakable" && !block.PowerUp){
                 switch (rndNum){
                     case 1:
-                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "RocketPickUp.png")),"Rocket"));
+                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "HalfSpeedPowerUp.png")),"-Speed"));
                         break;
                     case 2:
+                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "BombPickUp.png")),"Bomb"));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (block.PowerUp){
+                switch (rndNum){
+                    case 1: case 2:
+                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "RocketPickUp.png")),"Rocket"));
+                        break;
+                    case 3: case 4:
                         powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "BigPowerUp.png")),"BigBallsBaby"));
                         break;
-                    case 3:
+                    case 5: case 6:
                         powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "DoubleSpeedPowerUp.png")),"+Speed"));
                         break;
-                    case 4: 
-                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "HalfSpeedPowerUp.png")),"-Speed"));
+                    case 7: case 8: 
+                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "WidePowerUp.png")),"+Width"));
+                        break;
+                    case 9: case 10:
+                        powerUps.AddEntity(new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "LifePickUp.png")),"+HP"));
                         break;
                 }
             }
@@ -285,29 +336,26 @@ namespace Breakout.BreakoutStates{
             RenderLives(Lives);
         }
         private void RenderLives(int input){
-            Entity heart0 = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(0.05f, 0.05f)),
-                new Image(Path.Combine("Assets", "Images", "heart_filled.png")));
-            Entity heart1 = new Entity(new StationaryShape(new Vec2F(0.0f,0.05f), new Vec2F(0.05f, 0.05f)),
-                new Image(Path.Combine("Assets", "Images", "heart_filled.png")));
-            Entity heart2 = new Entity(new StationaryShape(new Vec2F(0.0f,0.1f), new Vec2F(0.05f, 0.05f)),
-                new Image(Path.Combine("Assets", "Images", "heart_filled.png")));
-            switch (input){
-                case 1:
-                    heart1 = new Entity(new StationaryShape(new Vec2F(0.0f,0.05f), new Vec2F(0.05f, 0.05f)),
-                        new Image(Path.Combine("Assets", "Images", "heart_empty.png")));
-                    heart2 = new Entity(new StationaryShape(new Vec2F(0.0f,0.1f), new Vec2F(0.05f, 0.05f)),
-                        new Image(Path.Combine("Assets", "Images", "heart_empty.png")));
-                    break;
-                case 2:
-                    heart2 = new Entity(new StationaryShape(new Vec2F(0.0f,0.1f), new Vec2F(0.05f, 0.05f)),
-                        new Image(Path.Combine("Assets", "Images", "heart_empty.png")));
-                    break;
-                default:
-                    break;
+            List<Entity> hearts = new List<Entity>();
+            for (int i = 0; i < input; i++){
+                if (i > 2){
+                    hearts.Add(new Entity(new StationaryShape(new Vec2F(0.0f,i * 0.05f), new Vec2F(0.05f, 0.05f)),
+                        new Image(Path.Combine("Assets", "Images", "YellowHeart.png"))));
+                }
+                else {
+                    hearts.Add(new Entity(new StationaryShape(new Vec2F(0.0f,i * 0.05f), new Vec2F(0.05f, 0.05f)),
+                        new Image(Path.Combine("Assets", "Images", "heart_filled.png"))));
+                }
             }
-            heart0.RenderEntity();
-            heart1.RenderEntity();
-            heart2.RenderEntity();
+            if (hearts.Count < 3){
+                for (int i = hearts.Count; i < 3; i++){
+                    hearts.Add(new Entity(new StationaryShape(new Vec2F(0.0f,i * 0.05f), new Vec2F(0.05f, 0.05f)),
+                        new Image(Path.Combine("Assets", "Images", "heart_empty.png"))));
+                }
+            }
+            for (int i = 0; i < hearts.Count; i++){
+                hearts[i].RenderEntity();
+            }
         }
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             if (action == KeyboardAction.KeyPress){

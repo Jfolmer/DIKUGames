@@ -47,7 +47,7 @@ namespace Breakout {
             if (launched) {
                 if (shape.Position.Y + shape.Extent.Y > 1.0f) { // toppen
                     this.shape.Direction = new Vec2F(AngleRandomizer(shape.Direction.X), -AngleRandomizer(shape.Direction.Y));
-                } else if (shape.Position.X < 0.0f || shape.Position.X + shape.Extent.X > 1.0f) { // venstre
+                } else if (shape.Position.X <= 0.0f || shape.Position.X + shape.Extent.X >= 1.0f) { // venstre
                     this.shape.Direction = new Vec2F(-AngleRandomizer(shape.Direction.X), AngleRandomizer(shape.Direction.Y));
                 } else if (shape.Position.Y + shape.Extent.Y < 0.0f) { // bunden
                     this.DeleteEntity();

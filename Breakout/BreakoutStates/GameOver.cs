@@ -1,22 +1,27 @@
 using System.IO;
+using DIKUArcade.Entities;
 using DIKUArcade.State;
 using DIKUArcade.Graphics;
 using DIKUArcade.Input;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
-using DIKUArcade.Entities;
 
 namespace Breakout.BreakoutStates {
-    public class GamePaused : IGameState {
-        private static GamePaused instance = null;
+    public class GameOver : IGameState {
+        private static GameOver instance = null;
         private Text[] menuButtons;
+        private Text[] text;
         private int activeMenuButton;
         private int maxMenuButtons;
-        public GamePaused(){
-
+        public GameOver(){
+            
+            text = new[]{ 
+                new Text("Game Over", new Vec2F(0.2f,0.3f), new Vec2F(0.4f,0.4f)),
+            };
+            text[0].SetColor(new Vec3F(1.0f,0.0f,0.0f));
             menuButtons = new []{
-                new Text("Main Menu", new Vec2F(0.4f,0.1f),new Vec2F(0.3f,0.3f)),
-                new Text("Continue", new Vec2F(0.4f,0.2f),new Vec2F(0.3f,0.3f))
+                new Text("Main Menu", new Vec2F(0.2f,0.0f),new Vec2F(0.4f,0.4f)),
+                new Text("Restart Game", new Vec2F(0.2f,0.1f),new Vec2F(0.4f,0.4f))
             };
             
             for (int i = 0; i <= menuButtons.Length - 1; i++) {
@@ -27,12 +32,12 @@ namespace Breakout.BreakoutStates {
 
             maxMenuButtons = 2;
         }
-        public static GamePaused GetInstance() {
-            if (GamePaused.instance == null) {
-                GamePaused.instance = new GamePaused();
-                GamePaused.instance.ResetState();
+        public static GameOver GetInstance() {
+            if (GameOver.instance == null) {
+                GameOver.instance = new GameOver();
+                GameOver.instance.ResetState();
             }
-            return GamePaused.instance;
+            return GameOver.instance;
         }
         public static void SetInstance(){
             instance = null;
@@ -43,7 +48,13 @@ namespace Breakout.BreakoutStates {
             Entity backgroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
                 new Image(Path.Combine("Assets", "Images", "SpaceBackground.png")));
             backgroundImage.RenderEntity();
+
+            for (int i = 0; i <= text.Length - 1; i++) {
+                text[i].RenderText();
+            }
+            
             menuButtons[activeMenuButton].SetColor(new Vec3F(0.0f,0.8f,0.8f));
+
             for (int i = 0; i <= menuButtons.Length - 1; i++) {
                 menuButtons[i].RenderText();
             }

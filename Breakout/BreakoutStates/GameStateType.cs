@@ -5,7 +5,9 @@ namespace BreakoutStates{
         GameRunning,
         MainMenu,
         GamePaused,
-        LevelSelector
+        LevelSelector,
+        GameOver,
+        ScoreScreen
     }
 
     public static class StateTransformer{
@@ -15,6 +17,8 @@ namespace BreakoutStates{
                 "MAIN_MENU" => GameStateType.MainMenu,
                 "GAME_PAUSED" => GameStateType.GamePaused,
                 "LEVEL_SELECTOR" => GameStateType.LevelSelector,
+                "GAME_OVER" => GameStateType.GameOver,
+                "SCORE_SCREEN" => GameStateType.ScoreScreen,
                 _ => throw new ArgumentException("INVALID"),
             };
         }
@@ -24,6 +28,8 @@ namespace BreakoutStates{
                 GameStateType.MainMenu => "MAIN_MENU",
                 GameStateType.GamePaused => "GAME_PAUSED",
                 GameStateType.LevelSelector => "LEVEL_SELECTOR",
+                GameStateType.GameOver => "GAME_OVER",
+                GameStateType.ScoreScreen => "SCORE_SCREEN",
                 _ => throw new ArgumentException("INVALID"),
             };
         }
