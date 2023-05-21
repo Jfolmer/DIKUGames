@@ -149,141 +149,13 @@ namespace Breakout.BreakoutStates{
         }
         public void UpdateState() {
             player.Move();
-            if (!ball.launched){
-                ball.shape.Position = new Vec2F((player.GetShape().Position.X + player.GetShape().Extent.X * (float)0.45), ((float)player.GetShape().Position.Y + player.GetShape().Extent.Y));
-            }
-            blocks.Iterate(block => {
-                var col = CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir;
-                if (col == CollisionDirection.CollisionDirDown 
-                    || col == CollisionDirection.CollisionDirUp){
-                    SpawnPowerUp(block);
-                    block.Hit();
-                    ball.UpdateDirection(ball.AngleRandomizer((ball.shape).Direction.X),-ball.AngleRandomizer((ball.shape).Direction.Y));
-                }
-                else if (col == CollisionDirection.CollisionDirRight 
-                    || col == CollisionDirection.CollisionDirLeft){
-                    SpawnPowerUp(block);
-                    block.Hit();
-                    ball.UpdateDirection(-ball.AngleRandomizer((ball.shape).Direction.X),ball.AngleRandomizer((ball.shape).Direction.Y));
-                } else if (ball.IsDeleted()) {
-                    if (Lives > 1){
-                        Lives--;
-                        player = new Player(
-                            new DynamicShape(new Vec2F(0.415f, 0.02f), new Vec2F(0.17f, 0.02f)),
-                            new Image(Path.Combine("Assets", "Images", "player.png"))
-                        );
-
-                        ball = new Ball(
-                            new DynamicShape(new Vec2F(0.5f, 0.015f), new Vec2F(0.03f, 0.03f)),
-                            new Image(Path.Combine("Assets", "Images", "SofieBold.png"))
-                        );
-                    }
-                    else{
-                        BreakoutBus.GetBus().RegisterEvent(
-                        new GameEvent{EventType = GameEventType.GameStateEvent,
-                            Message = "CHANGE_STATE",
-                            StringArg1 = "GAME_OVER"
-                        }
-                    );
-                    }
-                }
-                rockets.Iterate(rocket => {
-                    var rocketcol = CollisionDetection.Aabb(rocket.Shape.AsDynamicShape(), block.shape).Collision;
-                        if (rocket.Shape.Position.Y > 1.0f){
-                            rocket.DeleteEntity();
-                        }
-                        else if (rocketcol){
-                            AddExplosion(block.shape.Position,block.shape.Extent);
-                            block.Hit();
-                            SpawnPowerUp(block);
-                            rocket.DeleteEntity();
-                        }
-                });
-            });
-            var PlayerCol = CollisionDetection.Aabb(ball.shape, player.GetShape());
-                if (PlayerCol.CollisionDir == CollisionDirection.CollisionDirUp || PlayerCol.CollisionDir == CollisionDirection.CollisionDirDown){
-                    ball.UpdateDirection((ball.shape).Direction.X,-(ball.shape).Direction.Y);                  
-                }
-                else if (PlayerCol.CollisionDir == CollisionDirection.CollisionDirLeft || PlayerCol.CollisionDir == CollisionDirection.CollisionDirRight){
-                    ball.UpdateDirection(-(ball.shape).Direction.X,(ball.shape).Direction.Y);
-                }
+            PreLaunch(ball);
+            BlockCollisions();
+            PlayerCollisions();
             ball.Move();
-            blocks.Iterate(block =>
-                block.GetHP()
-            );
-            if (powerUps.CountEntities() != 0){
-                powerUps.Iterate(powerup => { 
-                    var col = CollisionDetection.Aabb(powerup.Shape.AsDynamicShape(),player.GetShape()).Collision;
-                    if (col) {
-                        switch (powerup.Type){
-                            case "+Speed":
-                                player.ChangeSpeed(1.5f);
-                                powerup.DeleteEntity();
-                                break;
-                            case "+Width":
-                                player.GetShape().Extent.X = player.GetShape().Extent.X * 1.5f;
-                                powerup.DeleteEntity();
-                                break;
-                            case "Rocket":
-                                player.Rocket = true;
-                                powerup.DeleteEntity();
-                                break;
-                            case "BigBallsBaby":
-                                ball.Shape.Extent = new Vec2F(ball.Shape.Extent.X * 1.5f, ball.Shape.Extent.Y * 1.5f);
-                                powerup.DeleteEntity();
-                                break;
-                            case "+HP":
-                                Lives++;
-                                powerup.DeleteEntity();
-                                break;
-                            case "Bomb":
-                                if (Lives > 1){
-                                    Lives--;
-                                    player = new Player(
-                                        new DynamicShape(new Vec2F(0.415f, 0.02f), new Vec2F(0.17f, 0.02f)),
-                                        new Image(Path.Combine("Assets", "Images", "player.png"))
-                                    );
-
-                                    ball = new Ball(
-                                        new DynamicShape(new Vec2F(0.5f, 0.015f), new Vec2F(0.03f, 0.03f)),
-                                        new Image(Path.Combine("Assets", "Images", "SofieBold.png"))
-                                    );
-                                }
-                                else{
-                                    BreakoutBus.GetBus().RegisterEvent(
-                                        new GameEvent{EventType = GameEventType.GameStateEvent,
-                                            Message = "CHANGE_STATE",
-                                            StringArg1 = "GAME_OVER"
-                                        }
-                                    );
-                                }
-                                powerup.DeleteEntity();
-                                break;
-                            case "-Speed":
-                                player.ChangeSpeed(0.75f);
-                                powerup.DeleteEntity();
-                                break;
-                        }
-                    }
-                    powerup.Move();
-                });
-            }
-            rockets.Iterate(rocket => rocket.Move());
-            if (ActiveLevel != "level3.txt" && blocks.CountEntities() == 0){
-                switch (ActiveLevel){
-                    case "level1.txt":
-                        SetLevel("level2.txt");
-                        ResetState();
-                        break;
-                    case "level2.txt":
-                        SetLevel("level3.txt");
-                        ResetState();
-                        break;
-                }
-            } else if (ActiveLevel == "level3.txt" && blocks.CountEntities() == 20){
-                SetLevel("level1.txt");
-                ResetState();
-            }
+            MovePowerUp();
+            MoveRockets();
+            CheckGameWon();
         }
         public void SpawnPowerUp(BaseBlock block){
             Vec2F spawn = new Vec2F((float)block.shape.Position.X - 0.015f + (float)block.shape.Extent.X / (float)2,block.shape.Position.Y);
@@ -365,6 +237,156 @@ namespace Breakout.BreakoutStates{
                 KeyRelease(key);
             }
         }
+        private void CheckGameWon(){
+            if (ActiveLevel != "level3.txt" && blocks.CountEntities() == 0){
+                switch (ActiveLevel){
+                    case "level1.txt":
+                        SetLevel("level2.txt");
+                        ResetState();
+                        break;
+                    case "level2.txt":
+                        SetLevel("level3.txt");
+                        ResetState();
+                        break;
+                }
+            } else if (ActiveLevel == "level3.txt" && blocks.CountEntities() == 20){
+                SetLevel("level1.txt");
+                ResetState();
+            }
+        }
+        private void MoveRockets(){
+            rockets.Iterate(rocket =>{ 
+                if (rocket.Shape.Position.Y > 1){
+                    rocket.DeleteEntity();
+                }
+                else {
+                    rocket.Move();
+                }});
+        }
+        private void PreLaunch(Ball input){
+            if (!ball.launched){
+                ball.shape.Position = new Vec2F((player.GetShape().Position.X + player.GetShape().Extent.X * (float)0.45), ((float)player.GetShape().Position.Y + player.GetShape().Extent.Y));
+            }
+        }
+        private void MovePowerUp(){
+            if (powerUps.CountEntities() != 0){
+                powerUps.Iterate(powerup => { 
+                    var col = CollisionDetection.Aabb(powerup.Shape.AsDynamicShape(),player.GetShape()).Collision;
+                    if (col) {
+                        switch (powerup.Type){
+                            case "+Speed":
+                                player.ChangeSpeed(1.5f);
+                                powerup.DeleteEntity();
+                                break;
+                            case "+Width":
+                                player.GetShape().Extent.X = player.GetShape().Extent.X * 1.5f;
+                                powerup.DeleteEntity();
+                                break;
+                            case "Rocket":
+                                player.Rocket = true;
+                                powerup.DeleteEntity();
+                                break;
+                            case "BigBallsBaby":
+                                ball.Shape.Extent = new Vec2F(ball.Shape.Extent.X * 1.5f, ball.Shape.Extent.Y * 1.5f);
+                                powerup.DeleteEntity();
+                                break;
+                            case "+HP":
+                                Lives++;
+                                powerup.DeleteEntity();
+                                break;
+                            case "Bomb":
+                                AddExplosion(new Vec2F(0.0f,0.0f),new Vec2F(1.0f,1.0f));
+                                if (Lives > 1){
+                                    Lives--;
+                                    player = new Player(
+                                        new DynamicShape(new Vec2F(0.415f, 0.02f), new Vec2F(0.17f, 0.02f)),
+                                        new Image(Path.Combine("Assets", "Images", "player.png"))
+                                    );
 
+                                    ball = new Ball(
+                                        new DynamicShape(new Vec2F(0.5f, 0.015f), new Vec2F(0.03f, 0.03f)),
+                                        new Image(Path.Combine("Assets", "Images", "SofieBold.png"))
+                                    );
+                                }
+                                else{
+                                    BreakoutBus.GetBus().RegisterEvent(
+                                        new GameEvent{EventType = GameEventType.GameStateEvent,
+                                            Message = "CHANGE_STATE",
+                                            StringArg1 = "GAME_OVER"
+                                        }
+                                    );
+                                }
+                                powerup.DeleteEntity();
+                                break;
+                            case "-Speed":
+                                player.ChangeSpeed(0.75f);
+                                powerup.DeleteEntity();
+                                break;
+                        }
+                    }
+                    powerup.Move();
+                });
+            }
+        }
+        private void PlayerCollisions(){
+            var PlayerCol = CollisionDetection.Aabb(ball.shape, player.GetShape());
+            if (PlayerCol.CollisionDir == CollisionDirection.CollisionDirUp || PlayerCol.CollisionDir == CollisionDirection.CollisionDirDown){
+                ball.UpdateDirection((ball.shape).Direction.X,-(ball.shape).Direction.Y);                  
+            }
+            else if (PlayerCol.CollisionDir == CollisionDirection.CollisionDirLeft || PlayerCol.CollisionDir == CollisionDirection.CollisionDirRight){
+                ball.UpdateDirection(-(ball.shape).Direction.X,(ball.shape).Direction.Y);
+            }
+        }
+        private void BlockCollisions(){
+            blocks.Iterate(block => {
+                var col = CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir;
+                if (col == CollisionDirection.CollisionDirDown 
+                    || col == CollisionDirection.CollisionDirUp){
+                    SpawnPowerUp(block);
+                    block.Hit();
+                    ball.UpdateDirection(ball.AngleRandomizer((ball.shape).Direction.X),-ball.AngleRandomizer((ball.shape).Direction.Y));
+                }
+                else if (col == CollisionDirection.CollisionDirRight 
+                    || col == CollisionDirection.CollisionDirLeft){
+                    SpawnPowerUp(block);
+                    block.Hit();
+                    ball.UpdateDirection(-ball.AngleRandomizer((ball.shape).Direction.X),ball.AngleRandomizer((ball.shape).Direction.Y));
+                } else if (ball.IsDeleted()) {
+                    if (Lives > 1){
+                        Lives--;
+                        player = new Player(
+                            new DynamicShape(new Vec2F(0.415f, 0.02f), new Vec2F(0.17f, 0.02f)),
+                            new Image(Path.Combine("Assets", "Images", "player.png"))
+                        );
+
+                        ball = new Ball(
+                            new DynamicShape(new Vec2F(0.5f, 0.015f), new Vec2F(0.03f, 0.03f)),
+                            new Image(Path.Combine("Assets", "Images", "SofieBold.png"))
+                        );
+                    }
+                    else{
+                        BreakoutBus.GetBus().RegisterEvent(
+                        new GameEvent{EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "GAME_OVER"
+                        }
+                    );
+                    }
+                }
+                rockets.Iterate(rocket => {
+                    var rocketcol = CollisionDetection.Aabb(rocket.Shape.AsDynamicShape(), block.shape).Collision;
+                        if (rocket.Shape.Position.Y > 1.0f){
+                            rocket.DeleteEntity();
+                        }
+                        else if (rocketcol){
+                            AddExplosion(block.shape.Position,block.shape.Extent);
+                            block.Hit();
+                            SpawnPowerUp(block);
+                            rocket.DeleteEntity();
+                        }
+                });
+            });
+        }
+            
     }
 }
