@@ -27,14 +27,19 @@ namespace Breakout {
         }
         
         public void Move() {
-            if (0.0f > shape.Position.X + shape.Direction.X ||
-            shape.Position.X + shape.Extent.X + shape.Direction.X > 1.0f){
-                return;
+            if (0.0f > shape.Position.X + shape.Direction.X){ // venstre
+                shape.Position.X = 0.0001f;
+            }
+            else if (shape.Position.X + shape.Extent.X + shape.Direction.X > 1.0f){ //højre
+                shape.Position.X = 0.9999f - shape.Extent.X;
             }
             shape.Move();
         }
         public void ChangeSpeed(float input){
-            MOVEMENT_SPEED = MOVEMENT_SPEED * input;
+            MOVEMENT_SPEED = input;
+        }
+        public float GetSpeed(){
+            return MOVEMENT_SPEED;
         }
         private void SetMoveLeft(bool val) {
             if (val){

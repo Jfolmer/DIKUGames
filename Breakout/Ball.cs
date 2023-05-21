@@ -45,16 +45,23 @@ namespace Breakout {
         }
         public void Move() {
             if (launched) {
+                Vec2F prepos = this.shape.Position;
+                shape.Move(shape.Direction);
                 if (shape.Position.Y + shape.Extent.Y > 1.0f) { // toppen
                     this.shape.Direction = new Vec2F(AngleRandomizer(shape.Direction.X), -AngleRandomizer(shape.Direction.Y));
-                } else if (shape.Position.X <= 0.0f || shape.Position.X + shape.Extent.X >= 1.0f) { // venstre
+                    this.shape.Position.Y = 0.9999f - shape.Extent.Y;
+                } else if (shape.Position.X <= 0.0f) { // venstre
                     this.shape.Direction = new Vec2F(-AngleRandomizer(shape.Direction.X), AngleRandomizer(shape.Direction.Y));
+                    this.shape.Position.X = 0.0001f;
+                }
+                else if (shape.Position.X + shape.Extent.X >= 1.0f) { // højre
+                    this.shape.Direction = new Vec2F(-AngleRandomizer(shape.Direction.X), AngleRandomizer(shape.Direction.Y));
+                    this.shape.Position.X = 0.9999f - shape.Extent.X;
                 } else if (shape.Position.Y + shape.Extent.Y < 0.0f) { // bunden
                     this.DeleteEntity();
                 }
                 float length = (float)System.Math.Sqrt(shape.Direction.X * shape.Direction.X + shape.Direction.Y * shape.Direction.Y);
                 this.shape.Direction = shape.Direction / length * speed;
-                shape.Move(shape.Direction);
             }
         }
     }
