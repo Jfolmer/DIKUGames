@@ -14,6 +14,7 @@ namespace Breakout.BreakoutStates {
             GamePaused.GetInstance();
             LevelSelector.GetInstance();
             GameOver.GetInstance();
+            ScoreScreen.GetInstance();
         }
         public void ProcessEvent(GameEvent input) {
             if (input.Message == "CHANGE_STATE"){
@@ -34,16 +35,22 @@ namespace Breakout.BreakoutStates {
                     ActiveState = GamePaused.GetInstance();
                     break;
                 case GameStateType.MainMenu:
+                    Points.ResetTally();
                     GameRunning.SetInstance();
                     ActiveState = MainMenu.GetInstance();
                     break;
                 case GameStateType.LevelSelector:
+                    Points.ResetTally();
                     GameRunning.SetInstance();
                     ActiveState = LevelSelector.GetInstance();
                     break;
                 case GameStateType.GameOver:
                     GameRunning.SetInstance();
                     ActiveState = GameOver.GetInstance();
+                    break;
+                case GameStateType.ScoreScreen:
+                    GameRunning.SetInstance();
+                    ActiveState = ScoreScreen.GetInstance();
                     break;
             }
         }

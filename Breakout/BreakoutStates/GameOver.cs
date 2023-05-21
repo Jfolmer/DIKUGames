@@ -14,11 +14,12 @@ namespace Breakout.BreakoutStates {
         private int activeMenuButton;
         private int maxMenuButtons;
         public GameOver(){
-            
             text = new[]{ 
-                new Text("Game Over", new Vec2F(0.2f,0.3f), new Vec2F(0.4f,0.4f)),
+                new Text("Game Over", new Vec2F(0.2f,0.4f), new Vec2F(0.4f,0.4f)),
+                new Text(string.Format("{0} points", Points.GetTally()), new Vec2F(0.2f,0.3f), new Vec2F(0.4f,0.4f)),
             };
             text[0].SetColor(new Vec3F(1.0f,0.0f,0.0f));
+            text[1].SetColor(new Vec3F(1.0f,0.0f,0.0f));
             menuButtons = new []{
                 new Text("Main Menu", new Vec2F(0.2f,0.0f),new Vec2F(0.4f,0.4f)),
                 new Text("Restart Game", new Vec2F(0.2f,0.1f),new Vec2F(0.4f,0.4f))
@@ -45,6 +46,8 @@ namespace Breakout.BreakoutStates {
         public void ResetState(){}
         public void UpdateState() {}
         public void RenderState() {
+            text[1] = new Text(string.Format("{0} points", Points.GetTally()), new Vec2F(0.2f,0.3f), new Vec2F(0.4f,0.4f));
+            text[1].SetColor(new Vec3F(1.0f,0.0f,0.0f));
             Entity backgroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
                 new Image(Path.Combine("Assets", "Images", "SpaceBackground.png")));
             backgroundImage.RenderEntity();
@@ -77,6 +80,7 @@ namespace Breakout.BreakoutStates {
                     case KeyboardKey.Enter:
                         switch (activeMenuButton){
                             case 1:
+                                Points.ResetTally();
                                 BreakoutBus.GetBus().RegisterEvent(
                                     new GameEvent {EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",

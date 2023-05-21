@@ -54,7 +54,11 @@ namespace Breakout.Loader{
                         for (int b = midpoint + 1; b < file[j].Length; b++){
                             key += file[j][b];
                         }
-                        Metadata.Add(key,stuff);
+                        if (stuff == "Time:"){
+                            Metadata.Add(stuff,key);
+                        } else {
+                            Metadata.Add(key,stuff);
+                        }
                         j++;
                     }
                 }
