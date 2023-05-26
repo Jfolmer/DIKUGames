@@ -27,6 +27,7 @@ Map/
 
 Meta:
 Name: Central Mass
+PowerUp: #
 Meta/
 
 Legend:

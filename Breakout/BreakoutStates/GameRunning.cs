@@ -23,8 +23,8 @@ namespace Breakout.BreakoutStates{
         private Entity backgroundImage;
         private AsciiReader reader;
         private LevelLoader loader;
-        private EntityContainer<BaseBlock> blocks;
-        private EntityContainer<PowerUp> powerUps;
+        public EntityContainer<BaseBlock> blocks;
+        public EntityContainer<PowerUp> powerUps;
         private EntityContainer<RocketShot> rockets;
         private List<Image> explosionStrides = ImageStride.CreateStrides(8, Path.Combine("Assets", "Images", "Explosion.png"));
         private AnimationContainer Explosions;
