@@ -10,10 +10,14 @@ namespace BreakoutTests.BlockTest{
             IBaseImage redimg = new Image(Path.Combine("Assets", "Images", "red-block.png"));
             block = new BaseBlock(new DynamicShape(pos,ext),img, false);
             redblock = new BaseBlock(new DynamicShape(pos,ext),redimg, false);
+            hardy = new HardenedBlock(new DynamicShape(pos,ext),img, false);
+            unb = new UnbreakableBlock(new DynamicShape(pos,ext),redimg, false);
         }
         private BaseBlock? block;
         private BaseBlock? notblock;
         private BaseBlock? redblock;
+        private HardenedBlock? hardy;
+        private UnbreakableBlock? unb;
 
         [Test]
         public void ColourDifferenceTest(){
@@ -39,7 +43,19 @@ namespace BreakoutTests.BlockTest{
             Assert.AreNotEqual(block?.HP,1);
             Assert.That(block.IsDeleted());
         }
-
+        [Test]
+        public void TestHardenedBlock(){
+            Assert.AreEqual(hardy?.BlockType,"Hardened");
+            Assert.AreEqual(hardy.GetHP(),2);
+        }
+        [Test]
+        public void TestUnbreakableBlock(){
+            Assert.AreEqual(unb?.HP,1);
+            Assert.That(!unb.IsDeleted());
+            unb?.Hit();
+            Assert.AreEqual(unb.HP,1);
+            Assert.That(!unb.IsDeleted());
+        }
         
     }
 }

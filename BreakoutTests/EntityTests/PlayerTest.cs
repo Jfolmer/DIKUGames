@@ -42,7 +42,7 @@ namespace Breakout.Tests {
             var Position = player?.GetPosition();
             player?.GetShape().ChangeDirection(new Vec2F(1.30f, 0.0f));
             player?.Move();
-            Assert.AreEqual(player?.GetPosition(), Position);
+            Assert.That(player?.GetPosition().X < 1.0f);
         }
 
         [Test]

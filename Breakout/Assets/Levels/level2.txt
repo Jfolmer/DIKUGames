@@ -29,7 +29,7 @@ Map/
 Meta:
 Name: LEVEL 2
 Time: 180
-PowerUp: k
+PowerUp: i
 Meta/
 
 Legend:

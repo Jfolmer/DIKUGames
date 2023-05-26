@@ -110,10 +110,10 @@ namespace Breakout.BreakoutStates{
         }
         private void LevelChange(string Lvl){
             if (Lvl != null){
-                reader.Read(Path.Combine("Breakout","Assets", "Levels", Lvl));
+                reader.Read(Path.Combine("Assets", "Levels", Lvl));
             }
             else {
-                reader.Read(Path.Combine("Breakout","Assets", "Levels", "level1.txt"));
+                reader.Read(Path.Combine("Assets", "Levels", "level1.txt"));
             }
             blocks = loader.ReadLevel(reader.GetMap(),reader.GetMeta(),reader.GetLegend());
         }
@@ -163,8 +163,10 @@ namespace Breakout.BreakoutStates{
             MovePowerUp();
             MoveRockets();
             CheckGameWon();
-            CheckTime();
-            PowerUpTimers();
+            if (reader.GetMeta().ContainsKey("Time:")){
+                PowerUpTimers();
+                CheckTime();
+            }
         }
         private void CheckTime(){
             if ((int)StaticTimer.GetElapsedSeconds() - startTime >= System.Int32.Parse(reader.GetMeta()["Time:"])){
@@ -225,13 +227,21 @@ namespace Breakout.BreakoutStates{
             }
             Explosions.RenderAnimations();
             RenderLives(Lives);
-            RenderTime();
+            if (reader.GetMeta().ContainsKey("Time:")){
+                RenderTime();
+            }
         }
         private void RenderTime(){
             int time = System.Int32.Parse(reader.GetMeta()["Time:"]) - (int)StaticTimer.GetElapsedSeconds() + startTime;
             Vec2F pos = new Vec2F(0.0f,-0.175f);
             Vec2F ext = new Vec2F(0.2f,0.2f);
-            Text graphic = new Text("Time:" + time.ToString(), pos, ext);
+            Text graphic;
+            if (time == 69){
+                graphic = new Text("Nice ;)", pos, ext);
+            }
+            else {
+                graphic = new Text("Time:" + time.ToString(), pos, ext);
+            }
             graphic.SetColor(new Vec3F(1.0f,1.0f,1.0f));
             graphic.RenderText();
         }

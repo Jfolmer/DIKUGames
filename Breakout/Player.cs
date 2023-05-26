@@ -33,7 +33,9 @@ namespace Breakout {
             else if (shape.Position.X + shape.Extent.X + shape.Direction.X > 1.0f){ //højre
                 shape.Position.X = 0.9999f - shape.Extent.X;
             }
-            shape.Move();
+            else {
+                shape.Move();
+            }
         }
         public void ChangeSpeed(float input){
             MOVEMENT_SPEED = input;
