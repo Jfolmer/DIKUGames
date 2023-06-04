@@ -69,7 +69,8 @@ namespace Breakout.BreakoutStates {
                                 BreakoutBus.GetBus().RegisterEvent(
                                     new GameEvent {EventType = GameEventType.GameStateEvent,
                                         Message = "CHANGE_STATE",
-                                        StringArg1 = "GAME_RUNNING"
+                                        StringArg1 = "GAME_RUNNING",
+                                        StringArg2 = ""
                                     }
                                 );
                                 break;

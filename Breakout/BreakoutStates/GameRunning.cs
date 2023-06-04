@@ -29,7 +29,8 @@ namespace Breakout.BreakoutStates{
         private List<Image> explosionStrides = ImageStride.CreateStrides(8, Path.Combine("Assets", "Images", "Explosion.png"));
         private AnimationContainer Explosions;
         private int Lives;
-        private int startTime;
+        private static int startTime;
+        private static int stopTime;
         private int startTimePlusWidth;
         private int startTimePlusSpeed;
         private int startTimeMinusSpeed;
@@ -68,6 +69,9 @@ namespace Breakout.BreakoutStates{
         public static void SetInstance(){
             instance = null;
         }
+        public static void SetTime(){
+            startTime = (int)((byte)StaticTimer.GetElapsedSeconds()) - stopTime;
+        }
         private void KeyPress(KeyboardKey key) {
             switch (key){
                 case KeyboardKey.A:
@@ -102,6 +106,7 @@ namespace Breakout.BreakoutStates{
                             StringArg1 = "GAME_PAUSED"
                         }
                     );
+                    stopTime = (int)((byte)StaticTimer.GetElapsedSeconds()) - startTime;
                     break;
 
                 default:
@@ -295,7 +300,7 @@ namespace Breakout.BreakoutStates{
                         );
                         break;
                 }
-            } else if (ActiveLevel == "level3.txt" && blocks.CountEntities() > 21){
+            } else if (ActiveLevel == "level3.txt" && blocks.CountEntities() < 21){
                 BreakoutBus.GetBus().RegisterEvent(
                     new GameEvent{EventType = GameEventType.GameStateEvent,
                         Message = "CHANGE_STATE",
