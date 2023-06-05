@@ -9,6 +9,9 @@ using Breakout;
 namespace Breakout.Tests {
     [TestFixture]
     public class PowerUpTesting {
+        private StateMachine? Staten;
+        private EntityContainer<PowerUp>? powerUps;
+        private PowerUp? powerUp;
         [SetUp]
         public void InitiateStateMachine() {
             DIKUArcade.GUI.Window.CreateOpenGLContext();
@@ -21,10 +24,6 @@ namespace Breakout.Tests {
                 });
             powerUps = new EntityContainer<PowerUp>();
         }
-        private StateMachine? Staten;
-        private EntityContainer<PowerUp>? powerUps;
-        private PowerUp? powerUp;
-
         [Test]
         public void TestPowerUpSpawn() {
             Vec2F spawn = new Vec2F (0.5f,0.5f);
@@ -41,6 +40,16 @@ namespace Breakout.Tests {
             powerUp.Move();
             Assert.AreNotEqual(powerUp.Shape.Position, spawn);
         }
-
+/*         [Test]
+        public void TestPowerUpOutOfBounds() {
+            Vec2F spawn = new Vec2F (0.5f,0.5f);
+            powerUp = new PowerUp(spawn,new Image(Path.Combine("Assets","Images", "RocketPickUp.png")),"Rocket");
+            powerUps?.AddEntity(powerUp);
+            Assert.AreEqual(powerUps?.CountEntities(),1);
+            for (int i = 0; i < 100; i++) {
+                powerUp.Move();
+            }
+            Assert.AreEqual(powerUps?.CountEntities(),0);
+        } */
     }
 }

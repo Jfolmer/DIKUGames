@@ -49,5 +49,13 @@ namespace Breakout.Tests {
         public void TestRectangular(){
             Assert.AreNotEqual(player?.GetShape().Extent.Y, player?.GetShape().Extent.X);
         }
+        [Test]
+        public void TestGetShape(){
+            Assert.IsNotNull(player?.GetShape());
+        }
+        [Test]
+        public void TestGetSpeed(){
+            Assert.AreEqual(player?.GetSpeed(),0.015f);
+        }
     }
 }
