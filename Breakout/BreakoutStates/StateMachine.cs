@@ -28,6 +28,7 @@ namespace Breakout.BreakoutStates {
         private void SwitchState(GameStateType stateType) {
             switch (stateType) {
                 case GameStateType.GameRunning:
+                    GameRunning.SetTime();
                     GamePaused.SetInstance();
                     ActiveState = GameRunning.GetInstance();
                     break;
