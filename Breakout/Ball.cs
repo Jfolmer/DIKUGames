@@ -22,16 +22,28 @@ namespace Breakout {
             this.launched = false;
             this.entity = this;
         }
+        /// <summary> Render the ball </summary>
+        /// <param> Null </param>
+        /// <returns> void </returns>
         public void Render() {
             entity.RenderEntity();
         }
+        /// <summary> update the ball direction </summary>
+        /// <param> float xDirection, float yDirection </param>
+        /// <returns> void </returns>
         public void UpdateDirection(float xDirection, float yDirection) {
             (shape.AsDynamicShape()).ChangeDirection(new Vec2F(xDirection, yDirection));
         }
+        /// <summary> Small adjustment angle to the ball's direction </summary>
+        /// <param> float input </param>
+        /// <returns> float </returns>
         public float AngleRandomizer(float input){
             Random rnd = new Random();
             return (input + rnd.Next(-1,1) * 0.001f);
         }
+        /// <summary> ensures the ball is only launched when we want it to be launched </summary>
+        /// <param> Vec2F direction </param>
+        /// <returns> void </returns>
         public void Launch(Vec2F direction) {
             if (!launched) {
                 if (direction.Y < 0.0f) {
@@ -43,6 +55,9 @@ namespace Breakout {
                 this.launched = true;
             }
         }
+        /// <summary> Move the ball, within our borders, besides the bottom </summary>
+        /// <param> Null </param>
+        /// <returns> void </returns>
         public void Move() {
             if (launched) {
                 Vec2F prepos = this.shape.Position;

@@ -16,11 +16,15 @@ public class RocketShot : Entity {
             this.shape = new DynamicShape (position, extent, direction);
             this.Shape.AsDynamicShape().ChangeDirection(direction);
         }
-    
+    /// <summary> moves the RocketShot </summary>
+    /// <param> Null </param>
+    /// <returns> void </returns>
     public void Move(){
         this.Shape.Move(direction);
     }
-
+    /// <summary> Get the shape of RocketShot </summary>
+    /// <param> Null </param>
+    /// <returns> DynamicShape </returns>
     public void SetShape(DynamicShape input){
         shape = input;
     }
