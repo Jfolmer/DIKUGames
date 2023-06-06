@@ -16,6 +16,16 @@ namespace Breakout.BreakoutStates {
             GameOver.GetInstance();
             ScoreScreen.GetInstance();
         }
+        
+        /// <summary>
+        /// Processes a GameEvent (Switching of states) sent through the GameBus
+        /// </summary>
+        /// <param>
+        ///  A GameEvent
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public void ProcessEvent(GameEvent input) {
             if (input.Message == "CHANGE_STATE"){
                 if (input.StringArg1 == "GAME_RUNNING" && input.StringArg2 != ""){
@@ -25,6 +35,16 @@ namespace Breakout.BreakoutStates {
                 SwitchState(StateTransformer.TransformStringToState(input.StringArg1));
             }
         }
+
+        /// <summary>
+        /// Switches the active state to the input GameStateType
+        /// </summary>
+        /// <param>
+        ///  A GameStateType
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         private void SwitchState(GameStateType stateType) {
             switch (stateType) {
                 case GameStateType.GameRunning:

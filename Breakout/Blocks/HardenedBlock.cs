@@ -18,6 +18,16 @@ namespace Breakout.Blocks{
         public override string BlockType {get;}
         public override bool PowerUp {get;set;}
         public string ImagePath;
+
+        /// <summary>
+        /// Damages the block, updates the image and deletes the block if relavant
+        /// </summary>
+        /// <param>
+        ///  A GameEvent
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public override void Hit(){
             HP--;
             if (HP == 1){

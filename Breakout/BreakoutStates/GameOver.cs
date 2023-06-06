@@ -33,6 +33,16 @@ namespace Breakout.BreakoutStates {
 
             maxMenuButtons = 2;
         }
+
+        /// <summary>
+        ///  Returns the local instance field or resets the instance of GameOver
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// GameOver
+        /// </returns>
         public static GameOver GetInstance() {
             if (GameOver.instance == null) {
                 GameOver.instance = new GameOver();
@@ -40,11 +50,51 @@ namespace Breakout.BreakoutStates {
             }
             return GameOver.instance;
         }
+
+        /// <summary>
+        ///  Sets the local instance field to null
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// void
+        /// </returns>
         public static void SetInstance(){
             instance = null;
         }
+
+        /// <summary>
+        ///  Does noooothing, but is needed due to interface
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public void ResetState(){}
+
+        /// <summary>
+        ///  Does noooothing, but is needed due to interface
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public void UpdateState() {}
+
+        /// <summary>
+        ///  Renders the different elements in the GameOver State
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public void RenderState() {
             text[1] = new Text(string.Format("{0} points", Points.GetTally()), new Vec2F(0.2f,0.3f), new Vec2F(0.4f,0.4f));
             text[1].SetColor(new Vec3F(1.0f,0.0f,0.0f));
@@ -62,6 +112,19 @@ namespace Breakout.BreakoutStates {
                 menuButtons[i].RenderText();
             }
         }
+
+        /// <summary>
+        ///  Handles input from the player in the GameOver State
+        /// </summary>
+        /// <param action>
+        ///  A KeyboardAction. Wether or not a key was pressed or let go
+        /// </param action>
+        /// <param key>
+        ///  A KeyboardKey. The key pressed by the user
+        /// </param key>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             if (action == KeyboardAction.KeyPress){
                 switch (key) {

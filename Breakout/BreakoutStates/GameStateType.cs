@@ -11,6 +11,16 @@ namespace BreakoutStates{
     }
 
     public static class StateTransformer{
+
+        /// <summary>
+        ///  Translates a relevant string into the corrosponding gamestatetype
+        /// </summary>
+        /// <param>
+        ///  A string representing a GameStateType eg. 'GAME_RUNNING'
+        /// </param>
+        /// <returns>
+        ///  A GameStateType eg. 'GameStateType.MainMenu'
+        /// </returns>
         public static GameStateType TransformStringToState(string state){
             return state switch{
                 "GAME_RUNNING" => GameStateType.GameRunning,
@@ -22,6 +32,16 @@ namespace BreakoutStates{
                 _ => throw new ArgumentException("INVALID"),
             };
         }
+
+        /// <summary>
+        ///  Translates a gamestatetype into the corrosponding string representation of said gamestatetype
+        /// </summary>
+        /// <param>
+        ///  A GameStateType eg. 'GameStateType.MainMenu'
+        /// </param>
+        /// <returns>
+        ///  A string representing a GameStateType eg. 'GAME_RUNNING' 
+        /// </returns>
         public static string TransformStateToString(GameStateType state){
             return state switch{
                 GameStateType.GameRunning => "GAME_RUNNING",

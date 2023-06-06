@@ -12,6 +12,16 @@ namespace Breakout.Blocks{
         public override Entity entity {get;}
         public override DynamicShape shape {get;}
         public override string BlockType {get;}
+
+        /// <summary>
+        ///  Does noooothing, but is needed due to interface
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public override void Hit(){}
     }
 }

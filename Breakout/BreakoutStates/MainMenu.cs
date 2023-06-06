@@ -34,6 +34,16 @@ namespace Breakout.BreakoutStates {
 
             maxMenuButtons = 3;
         }
+        
+        /// <summary>
+        ///  Returns the local instance field or resets the instance of MainMenu
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// MainMenu
+        /// </returns>
         public static MainMenu GetInstance() {
             if (MainMenu.instance == null) {
                 MainMenu.instance = new MainMenu();
@@ -41,10 +51,40 @@ namespace Breakout.BreakoutStates {
             }
             return MainMenu.instance;
         }
+
+        /// <summary>
+        ///  Resets the active menu button back to starting value
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// void
+        /// </returns>
         public void ResetState(){
             activeMenuButton = 2;
         }
+
+        /// <summary>
+        ///  Does noooothing, but is needed due to interface
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public void UpdateState() {}
+
+        /// <summary>
+        ///  Renders the different elements in the MainMenu State
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public void RenderState() {
 
             random = new Random();
@@ -64,6 +104,19 @@ namespace Breakout.BreakoutStates {
             backGroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
                 new Image(Path.Combine("Assets", "Images", "BreakoutTitleScreen.png")));
         }
+
+        /// <summary>
+        ///  Handles input from the player in the MainMenu State
+        /// </summary>
+        /// <param action>
+        ///  A KeyboardAction. Wether or not a key was pressed or let go
+        /// </param action>
+        /// <param key>
+        ///  A KeyboardKey. The key pressed by the user
+        /// </param key>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             if (action == KeyboardAction.KeyPress){
                 switch (key) {

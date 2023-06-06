@@ -16,9 +16,29 @@ namespace Breakout.Blocks{
         public virtual int HP {get;set;}
         public virtual string BlockType {get;}
         public virtual bool PowerUp {get;set;}
+
+        /// <summary>
+        /// Returns the local HP field
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// An integer
+        /// </returns>
         public virtual int GetHP(){
             return HP;
         }
+
+        /// <summary>
+        /// Damages the block and deletes the block if relavant
+        /// </summary>
+        /// <param>
+        ///  A GameEvent
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public virtual void Hit(){
             HP--;
             if (HP == 0){

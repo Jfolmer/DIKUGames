@@ -27,6 +27,16 @@ namespace Breakout.BreakoutStates {
 
             maxMenuButtons = 2;
         }
+
+        /// <summary>
+        ///  Returns the local instance field or resets the instance of GamePaused
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// GamePaused
+        /// </returns>
         public static GamePaused GetInstance() {
             if (GamePaused.instance == null) {
                 GamePaused.instance = new GamePaused();
@@ -34,11 +44,51 @@ namespace Breakout.BreakoutStates {
             }
             return GamePaused.instance;
         }
+
+        /// <summary>
+        ///  Sets the local instance field to null
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// void
+        /// </returns>
         public static void SetInstance(){
             instance = null;
         }
+
+        /// <summary>
+        ///  Does noooothing, but is needed due to interface
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public void ResetState(){}
+
+        /// <summary>
+        ///  Does noooothing, but is needed due to interface
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public void UpdateState() {}
+
+        /// <summary>
+        ///  Renders the different elements in the GamePaused State
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Void
+        /// </returns>
         public void RenderState() {
             Entity backgroundImage = new Entity(new StationaryShape(new Vec2F(0.0f,0.0f), new Vec2F(1.0f,1.0f)),
                 new Image(Path.Combine("Assets", "Images", "SpaceBackground.png")));
@@ -48,6 +98,19 @@ namespace Breakout.BreakoutStates {
                 menuButtons[i].RenderText();
             }
         }
+        
+        /// <summary>
+        ///  Handles input from the player in the GamePaused State
+        /// </summary>
+        /// <param action>
+        ///  A KeyboardAction. Wether or not a key was pressed or let go
+        /// </param action>
+        /// <param key>
+        ///  A KeyboardKey. The key pressed by the user
+        /// </param key>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             if (action == KeyboardAction.KeyPress){
                 switch (key) {

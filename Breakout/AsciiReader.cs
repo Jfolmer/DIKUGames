@@ -16,18 +16,55 @@ namespace Breakout.Loader{
             Metadata = new Dictionary<string,string>();
             Legend = new Dictionary<char, string>();
         }
+        
+        /// <summary>
+        ///  Returns the MapData, that the ascii reader has read
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  A list of strings
+        /// </returns>
         public List<string> GetMap(){
             return Map;
         }
 
+        /// <summary>
+        ///  Returns the MetaData, that the ascii reader has read
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  A disctionary of strings with strings as keys
+        /// </returns>
         public Dictionary<string,string> GetMeta(){
             return Metadata;
         }
 
+        /// <summary>
+        ///  Returns the LegendData, that the ascii reader has read
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  A disctionary of strings with characters as keys
+        /// </returns>
         public Dictionary<char, string> GetLegend(){
             return Legend;
         }
 
+        /// <summary>
+        ///  Saves the relevant meta-, legend and mapdata from a .txt file
+        /// </summary>
+        /// <param>
+        ///  A string being the directory path for the .txt file to be read
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void Read(string filename){
 
             string[] file = File.ReadAllLines(filename);

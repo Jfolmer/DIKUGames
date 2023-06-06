@@ -7,7 +7,7 @@ namespace Breakout
     {
         static void Main(string[] args)
         {
-            var windowArgs = new WindowArgs() { Title = "Breakout v0.1" };
+            var windowArgs = new WindowArgs() { Title = "Breakout v6.9" };
             var game = new Game(windowArgs);
             game.Run();
             

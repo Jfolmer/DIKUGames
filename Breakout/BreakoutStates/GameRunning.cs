@@ -39,6 +39,16 @@ namespace Breakout.BreakoutStates{
         public GameRunning(){
             GameInit();
         }
+
+        /// <summary>
+        ///  Initializes the GameRunning state
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void GameInit(){
             player = new Player(
                 new DynamicShape(new Vec2F(0.415f, 0.02f), new Vec2F(0.17f, 0.02f)),
@@ -63,15 +73,55 @@ namespace Breakout.BreakoutStates{
             Lives = 3;
             startTime = (int)StaticTimer.GetElapsedSeconds();
         }
+
+        /// <summary>
+        ///  Sets the level field to the input string
+        /// </summary>
+        /// <param>
+        ///  A string being the 'final' part of the directory path for the .txt file for the level. Example 'wall.txt'
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public static void SetLevel(string lvl){
             ActiveLevel = lvl;
         }
+
+        /// <summary>
+        ///  Sets the instance field to null
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public static void SetInstance(){
             instance = null;
         }
+
+        /// <summary>
+        ///  Updates the timer between pauses to account for time difference during pause.
+        /// </summary>
+        /// <param>
+        ///  null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public static void SetTime(){
             startTime = (int)((byte)StaticTimer.GetElapsedSeconds()) - stopTime;
         }
+
+        /// <summary>
+        ///  Handles the different keyboard inputs made by the player 
+        /// </summary>
+        /// <param>
+        ///  A KeyboardKey, aka the input that was pressed on the keyboard by the player
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void KeyPress(KeyboardKey key) {
             switch (key){
                 case KeyboardKey.A:
@@ -113,6 +163,16 @@ namespace Breakout.BreakoutStates{
                     break;
             }
         }
+
+        /// <summary>
+        ///  Changes the local level field to the input string
+        /// </summary>
+        /// <param>
+        ///  A string being the 'final' part of the directory path for the .txt file for the level. Example 'wall.txt'
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void LevelChange(string Lvl){
             if (Lvl != null){
                 reader.Read(Path.Combine("Assets", "Levels", Lvl));
@@ -122,6 +182,16 @@ namespace Breakout.BreakoutStates{
             }
             blocks = loader.ReadLevel(reader.GetMap(),reader.GetMeta(),reader.GetLegend());
         }
+
+        /// <summary>
+        ///  Handles if the player stops holding in a keyboard input
+        /// </summary>
+        /// <param>
+        ///  A KeyboardKey, aka the input that was pressed on the keyboard by the player
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void KeyRelease(KeyboardKey key) {
             switch (key){
                 case KeyboardKey.A:
@@ -145,6 +215,16 @@ namespace Breakout.BreakoutStates{
 
             }
         }
+
+        /// <summary>
+        ///  Returns the local instance field or resets the instance of GameRunning
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        /// Gamerunning
+        /// </returns>
         public static GameRunning GetInstance() {
             if (GameRunning.instance == null) {
                 GameRunning.instance = new GameRunning();
@@ -152,13 +232,47 @@ namespace Breakout.BreakoutStates{
             }
             return GameRunning.instance;
         }
+
+        /// <summary>
+        ///  Reinitializes the game
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void ResetState(){
             GameInit();
         }
+
+        /// <summary>
+        ///  Adds the animation of an explosion at the designated position and extent, to the local AnimationContainer
+        /// field
+        /// </summary>
+        /// <param position>
+        ///  A 2 Dimensional Vector indicating the lower left corner of the desired explosion animation
+        /// </param position>
+        /// <param extent>
+        ///  A 2 Dimensional Vector indicating the extent of the desired explosion animation
+        /// </param extent>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void AddExplosion(Vec2F position, Vec2F extent) {
             Explosions.AddAnimation(new StationaryShape(position,extent),
             500, new ImageStride (8, explosionStrides));
         }
+
+        /// <summary>
+        ///  Updates the different game elements, such as the players movement and win/lose conditions for example
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void UpdateState() {
             player.Move();
             PreLaunch(ball);
@@ -173,6 +287,16 @@ namespace Breakout.BreakoutStates{
                 CheckTime();
             }
         }
+
+        /// <summary>
+        ///  Checks if the time limit has been reached and stops the game if so
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void CheckTime(){
             if ((int)StaticTimer.GetElapsedSeconds() - startTime >= System.Int32.Parse(reader.GetMeta()["Time:"])){
                 BreakoutBus.GetBus().RegisterEvent(
@@ -183,6 +307,18 @@ namespace Breakout.BreakoutStates{
                 );
             }
         }
+
+        /// <summary>
+        ///  Checks wether a PowerUp or hazard should be spawned, if so it spawns a them with a random chance at
+        /// the position of the input block. Spawning in this case meaning adding to a new entity to the entity container 
+        /// field 'powerUps'
+        /// </summary>
+        /// <param>
+        ///  A block
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void SpawnPowerUp(BaseBlock block){
             Vec2F spawn = new Vec2F((float)block.shape.Position.X - 0.015f + (float)block.shape.Extent.X / (float)2,block.shape.Position.Y);
             System.Random rnd = new System.Random();
@@ -219,6 +355,16 @@ namespace Breakout.BreakoutStates{
                 }
             }
         }
+
+        /// <summary>
+        ///  Renders the different game objects and information, such as the player model and life containers
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>       
         public void RenderState() {
             backgroundImage.RenderEntity();
             player.Render();
@@ -236,6 +382,16 @@ namespace Breakout.BreakoutStates{
                 RenderTime();
             }
         }
+
+        /// <summary>
+        ///  Renders the timer in the bottom left corner of the screen
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void RenderTime(){
             int time = System.Int32.Parse(reader.GetMeta()["Time:"]) - (int)StaticTimer.GetElapsedSeconds() + startTime;
             Vec2F pos = new Vec2F(0.0f,-0.175f);
@@ -250,6 +406,16 @@ namespace Breakout.BreakoutStates{
             graphic.SetColor(new Vec3F(1.0f,1.0f,1.0f));
             graphic.RenderText();
         }
+
+        /// <summary>
+        ///  Renders the current Hitpoints of the player, takes empty heart container and bonus hearts into consideration
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void RenderLives(int input){
             List<Entity> hearts = new List<Entity>();
             for (int i = 0; i < input; i++){
@@ -272,6 +438,19 @@ namespace Breakout.BreakoutStates{
                 hearts[i].RenderEntity();
             }
         }
+
+        /// <summary>
+        ///  Checks wether a key is pressed or released and sends them along to their respective methods
+        /// </summary>
+        /// <param action>
+        ///  A KeyboardAction. Wether or not a key was pressed or let go
+        /// </param action>
+        /// <param key>
+        ///  A KeyboardKey. The key pressed by the user
+        /// </param key>
+        /// <returns>
+        ///  Void
+        /// </returns>
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             if (action == KeyboardAction.KeyPress){
                 KeyPress(key);
@@ -280,6 +459,16 @@ namespace Breakout.BreakoutStates{
                 KeyRelease(key);
             }
         }
+        
+        /// <summary>
+        ///  Checks wether or not the player has destroyed all the blocks needed to win a level. 
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void CheckGameWon(){
             if (ActiveLevel != "level3.txt" && blocks.CountEntities() == 0){
                 switch (ActiveLevel){
@@ -309,6 +498,16 @@ namespace Breakout.BreakoutStates{
                 );
             }
         }
+
+        /// <summary>
+        ///  Updates the position of the rockets the player has shot and checks if they go out of bounds
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void MoveRockets(){
             rockets.Iterate(rocket =>{ 
                 if (rocket.Shape.Position.Y > 1){
@@ -318,11 +517,33 @@ namespace Breakout.BreakoutStates{
                     rocket.Move();
                 }});
         }
+
+        /// <summary>
+        ///  Checks wether the ball is launched, if it is not then it updates the balls position to follow the player
+        /// until launched
+        /// </summary>
+        /// <param>
+        ///  A ball
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void PreLaunch(Ball input){
             if (!ball.launched){
                 ball.shape.Position = new Vec2F((player.GetShape().Position.X + player.GetShape().Extent.X * (float)0.45), ((float)player.GetShape().Position.Y + player.GetShape().Extent.Y));
             }
         }
+
+        /// <summary>
+        ///  Updates the position of the different powerups and hazards, also checks for them being out of bounds
+        /// and promptly deletes them if that is the case
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void MovePowerUp(){
             if (powerUps.CountEntities() != 0){
                 powerUps.Iterate(powerup => { 
@@ -387,6 +608,16 @@ namespace Breakout.BreakoutStates{
                 });
             }
         }
+
+        /// <summary>
+        ///  Keeps a 10 second tracker for each different power-up or hazard
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void PowerUpTimers(){
             int MinusSpeedTime = (int) StaticTimer.GetElapsedSeconds() - startTimeMinusSpeed;
             int PlusSpeedTime = (int) StaticTimer.GetElapsedSeconds() - startTimePlusSpeed;
@@ -402,6 +633,17 @@ namespace Breakout.BreakoutStates{
                 player.GetShape().Extent = new Vec2F(0.17f,0.02f);
             }
         }
+
+        /// <summary>
+        ///  Checks if the ball collides with the player and 'bounces' the ball with a slight random element if a
+        /// collision occurs
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void PlayerCollisions(){
             var PlayerCol = CollisionDetection.Aabb(ball.shape, player.GetShape());
             if (PlayerCol.CollisionDir == CollisionDirection.CollisionDirUp || PlayerCol.CollisionDir == CollisionDirection.CollisionDirDown){
@@ -411,6 +653,17 @@ namespace Breakout.BreakoutStates{
                 ball.UpdateDirection(-ball.AngleRandomizer((ball.shape).Direction.X),ball.AngleRandomizer((ball.shape).Direction.Y));
             }
         }
+
+        /// <summary>
+        ///  Checks if the ball collides with the blocks and 'bounces' the ball with a slight random element if a
+        ///  collision occurs
+        /// </summary>
+        /// <param>
+        ///  Null
+        /// </param>
+        /// <returns>
+        ///  Void
+        /// </returns>
         private void BlockCollisions(){
             blocks.Iterate(block => {
                 var col = CollisionDetection.Aabb(ball.shape.AsDynamicShape(), block.shape).CollisionDir;
