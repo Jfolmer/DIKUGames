@@ -18,11 +18,15 @@ public class PowerUp : Entity {
             this.Shape.AsDynamicShape().ChangeDirection(direction);
             this.Type = type;
         }
-    
+    /// <summary> moves the powerups </summary>
+    /// <param> Null </param>
+    /// <returns> void </returns>
     public void Move(){
         this.Shape.Move(direction);
     }
-
+    /// <summary> Get the shape of powerups </summary>
+    /// <param> Null </param>
+    /// <returns> DynamicShape </returns>
     public void SetShape(DynamicShape input){
         shape = input;
     }

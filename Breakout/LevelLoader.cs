@@ -11,7 +11,9 @@ namespace Breakout.Loader{
     public class LevelLoader{
 
         public LevelLoader(){}
-
+        /// <summary> Reads the level from a txtfile and transforms the characters in the map to create different types of objects, such as blocks and powerups </summary>
+        /// <param> List<string> map, Dictionary<string, string> metadata, Dictionary<char, string> Legend </param>
+        /// <returns> EntityContainer<BaseBlock> </returns>
         public EntityContainer<BaseBlock> ReadLevel(List<string> map, Dictionary<string, string> metadata, Dictionary<char, string> Legend){
             EntityContainer<BaseBlock> output = new EntityContainer<BaseBlock>();
             for (int i = 0; i < map.Count; i++){

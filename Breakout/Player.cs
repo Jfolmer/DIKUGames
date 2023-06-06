@@ -21,11 +21,15 @@ namespace Breakout {
             this.Rocket = false;
             BreakoutBus.GetBus().Subscribe(GameEventType.PlayerEvent, this);
         }
-
+        /// <summary> Render the player </summary>
+        /// <param> Null </param>
+        /// <returns> void </returns>
         public void Render() {
             entity.RenderEntity();
         }
-        
+        /// <summary> Move the player in x direction without our borders </summary>
+        /// <param> Null</param>
+        /// <returns> void </returns>
         public void Move() {
             if (0.0f > shape.Position.X + shape.Direction.X){ // venstre
                 shape.Position.X = 0.0001f;
@@ -37,12 +41,21 @@ namespace Breakout {
                 shape.Move();
             }
         }
+        /// <summary> Change the speed of the player </summary>
+        /// <param> float input </param>
+        /// <returns> void </returns>
         public void ChangeSpeed(float input){
             MOVEMENT_SPEED = input;
         }
+        /// <summary> Get the movement speed of the player </summary>
+        /// <param> Null </param>
+        /// <returns> float </returns>
         public float GetSpeed(){
             return MOVEMENT_SPEED;
         }
+        /// <summary> Makes it possible to move the player left </summary>
+        /// <param> bool val </param>
+        /// <returns> void </returns>
         private void SetMoveLeft(bool val) {
             if (val){
                 moveLeft = moveLeft - MOVEMENT_SPEED;
@@ -52,7 +65,9 @@ namespace Breakout {
             }
             UpdateDirection();
         }
-
+        /// <summary> Makes it possible to move the player right </summary>
+        /// <param> bool val </param>
+        /// <returns> void </returns>
         private void SetMoveRight(bool val) {
             if (val){
                 moveRight = moveRight + MOVEMENT_SPEED;
@@ -62,21 +77,29 @@ namespace Breakout {
             }
             UpdateDirection();
         }
-
+        /// <summary> Update the direction of the player </summary>
+        /// <param> Null </param>
+        /// <returns> void </returns>
         private void UpdateDirection(){
             float sumX = moveRight + moveLeft ;
             Vec2F vec = new Vec2F (sumX,0.0f);
             shape.ChangeDirection(vec);
         }
-        
+        /// <summary> Gets player shape </summary>
+        /// <param> Null </param>
+        /// <returns> DynamicShape </returns>
         public DynamicShape GetShape(){
             return shape;
         }
-        
+        /// <summary> Gets player position </summary>
+        /// <param> Null </param>
+        /// <returns> Vec2F </returns>
         public Vec2F GetPosition(){
             return shape.Position;
         }
-
+        /// <summary> Proccess different events from player move </summary>
+        /// <param> GameEvent gameEvent </param>
+        /// <returns> void </returns>
         public void ProcessEvent(GameEvent gameEvent) {
             switch (gameEvent.Message){
                 case "LEFT":

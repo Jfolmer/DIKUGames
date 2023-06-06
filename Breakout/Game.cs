@@ -33,18 +33,28 @@ public class Game : DIKUGame, IGameEventProcessor {
         stateMachine = new StateMachine();
 
     }
-    
+    /// <summary> renders the games active state </summary>
+    /// <param> Null </param>
+    /// <returns> void </returns>
     public override void Render() {
         stateMachine.ActiveState.RenderState();  
     }
+    /// <summary> updates the games active state </summary>
+    /// <param> Null </param>
+    /// <returns> void </returns>
     public override void Update() {
         BreakoutBus.GetBus().ProcessEventsSequentially();
         stateMachine.ActiveState.UpdateState();        
     }
-
+    /// <summary> handles the keyboard input </summary>
+    /// <param> KeyboardAction action, KeyboardKey key </param>
+    /// <returns> void </returns>
     private void KeyHandler(KeyboardAction action, KeyboardKey key) {
         stateMachine.ActiveState.HandleKeyEvent(action,key);
     }
+    /// <summary> processes the events </summary>
+    /// <param>GameEvent gameEvent </param>
+    /// <returns> void </returns>
     public void ProcessEvent(GameEvent gameEvent) {
         if (gameEvent.EventType == GameEventType.WindowEvent){
             window.CloseWindow();
