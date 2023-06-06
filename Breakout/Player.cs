@@ -46,23 +46,21 @@ namespace Breakout {
         private void SetMoveLeft(bool val) {
             if (val){
                 moveLeft = moveLeft - MOVEMENT_SPEED;
-                UpdateDirection();
             }
             else{
                 moveLeft = 0.0f;
-                UpdateDirection();
             }
+            UpdateDirection();
         }
 
         private void SetMoveRight(bool val) {
             if (val){
                 moveRight = moveRight + MOVEMENT_SPEED;
-                UpdateDirection();
             }
             else{
                 moveRight = 0.0f;
-                UpdateDirection();
             }
+            UpdateDirection();
         }
 
         private void UpdateDirection(){
@@ -74,7 +72,7 @@ namespace Breakout {
         public DynamicShape GetShape(){
             return shape;
         }
-
+        
         public Vec2F GetPosition(){
             return shape.Position;
         }
@@ -84,19 +82,15 @@ namespace Breakout {
                 case "LEFT":
                     this.SetMoveLeft(true);
                     break;
-
                 case "NOTLEFT":
                     this.SetMoveLeft(false);
                     break;
-                
                 case "RIGHT":
                     this.SetMoveRight(true);
                     break;
-
                 case "NOTRIGHT":
                     this.SetMoveRight(false);
                     break;
-
                 default:
                     break;
             }

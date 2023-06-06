@@ -26,5 +26,4 @@ public class PowerUp : Entity {
     public void SetShape(DynamicShape input){
         shape = input;
     }
-
 }

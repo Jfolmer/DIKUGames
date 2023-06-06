@@ -56,6 +56,5 @@ namespace BreakoutTests.BlockTest{
             Assert.AreEqual(unb.HP,1);
             Assert.That(!unb.IsDeleted());
         }
-        
     }
 }
