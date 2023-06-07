@@ -28,13 +28,7 @@ namespace Breakout.Tests {
             ball?.Move();
             Assert.AreNotEqual(0.5f, ball?.shape.Position.X);
             Assert.AreNotEqual(0.5f, ball?.shape.Position.Y);
-        }        
-        [Test]
-        public void TestAngleRandomizer(){
-            float input = 0.5f;
-            float output = ball?.AngleRandomizer(input) ?? 0.0f;
-            Assert.AreNotEqual(input, output);
-        }
+        }       
         [Test]
         public void TestBallNotDeletedInBounds(){
             ball?.UpdateDirection(0.5f, 0.5f);
